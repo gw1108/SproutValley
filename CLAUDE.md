@@ -11,6 +11,7 @@ The role of this file is to describe common mistakes and confusion points that a
 - **Tunable numbers belong in `data/balance.csv`, NOT in `.gd` constants.** Any scalar someone might want to tweak while balancing or art-passing the game — player move speed, enemy/player/projectile sprite scale, light radii, damage, cooldowns/intervals, spawn pacing, projectile speed/lifetime — must be read through `BalanceData.get_value("<id>", <default>)`. For example: `static var BASE_SPEED := BalanceData.get_value("fire_ball_base_speed", 300.0)` — the CSV row is the source of truth; the second argument is only a missing-row fallback (keep the two in sync when you add the row). A `const` is acceptable only for genuine non-tunables: file/texture, colors, shader source, protocol/schema versions, sprite-sheet grid geometry, and structural/tabular data that already lives in its own CSV (`*_levels.csv`, wave/boss CSVs).
 When you touch code that still hardcodes a tunable, migrate that value to `balance.csv` as part of your change. (`get_value` returns floats only — non-scalar tunables like a Vector2 get one row per component or a single uniform-scale row.)
 - **Dev/debug tooling is the exception:** it is fine to add tooling that makes debugging, testing, or authoring easier (agent-play harnesses, debug overlays, cheat toggles, etc.),
+- **When work is reported done, actually double-check it.** Don't blindly trust an "all N entries covered" style claim — from a subagent, a script, or yourself. Verify completion against ground truth (count outputs, diff against the expected set, run the status check) before reporting done.
 
 ---
 
@@ -35,6 +36,11 @@ This is Godot 4.7
 
 **Art:**
 - `SourceArt/*` — Art assets and audio assets which do not need to be opened or reasoned over unless specified or fetching art assets.
+
+## Art assets (SourceArt/)
+- To find or understand art assets, do NOT browse or open files under `SourceArt/` directly. Grep `SourceArt/_catalog/catalog.jsonl` (case-insensitive; descriptions + tags include synonyms) and see `SourceArt/ART_CATALOG.md` for how to read it. Only Read a contact sheet from `SourceArt/_catalog/sheets/` when text can't disambiguate candidates; never Read individual art files.
+- If `SourceArt/_catalog/pending_updates.jsonl` contains entries with `"resolved": false`, source art changed after game assets may have been derived from it — surface this to the developer before art-related work, and mark handled ones with the `resolve` subcommand.
+- After adding/changing files under `SourceArt/`, run the `art-catalog` skill (script: `.claude/skills/art-catalog/scripts/art_catalog.py`).
 
 **Visual / rendering rules:**
 - `VISUAL_RULES.md` (repo root) — **this is a pixel-art game.** Read it before importing or rendering any texture, sprite, or VFX.
@@ -67,7 +73,7 @@ Tests are **not required**. Do not use TDD / test-first / red-green-refactor on 
 
 ### 3. Self-Improvement Loop
 - After any user correction or a discovered mistake, add a new entry to `tasks/lessons.md`. `tasks/lessons.md` is the catch-all log — always record there first.
-- Then, if the lesson is durable project knowledge tied to specific code or tooling (a tool gotcha, a setup step, a convention, an API quirk), **ask the user whether it should be promoted to a more permanent home** next to what it concerns — e.g. the relevant skill, a README, or this file. Durable knowledge lives beside the code; `lessons.md` keeps the process/meta lessons. Leave it in `lessons.md` if the user declines or it's a one-off process note.
+- Then, if the lesson is durable project knowledge tied to specific code or tooling (a tool gotcha, a setup step, a convention, an API quirk), **ask the user whether it should be promoted to a more permanent home** next to what it concerns — e.g. the relevant skill, a README, or this file. Durable knowledge lives beside the code; `lessons.md` keeps the process/meta lessons. Leave it in `lessons.md` if the user declines or it's a one-off process note. Promotion is a **move, not a copy**: delete the `lessons.md` entry once it's promoted.
 - Keep each entry minimal: a short **category header** (e.g. `### Research scoping`) plus a **one-line prevention rule**. Nothing else.
 - The category lets future agents skim and skip entries that look unrelated without reading the body. If a rule needs more context to be actionable, the category itself is too broad.
 - Before adding a new entry, check if an existing category already covers it; extend or refine that line instead of duplicating.
