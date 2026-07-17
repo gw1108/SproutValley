@@ -45,7 +45,7 @@ This is Godot 4.7
 
 Tests are **not required**. Do not use TDD / test-first / red-green-refactor on this project.
 
-**Unit testing framework: gdUnit4** is installed (at `lord-of-hirelings/addons/gdUnit4/`) and is the framework to use when tests *are* written. Test scripts are named `*_test.gd` and live in `lord-of-hirelings/test/`. See `lord-of-hirelings/test/smoke_test.gd` for a minimal example suite.
+**Unit testing framework: gdUnit4** is installed (at `sprout-valley/addons/gdUnit4/`) and is the framework to use when tests *are* written. Test scripts are named `*_test.gd` and live in `sprout-valley/test/`. See `sprout-valley/test/smoke_test.gd` for a minimal example suite.
 
 - **Implementation and tuning come first.** Build the feature, then tune its numbers by feel — game rules and balance are discovered by playing, not specified up front.
 - **Tests emerge from play and from regressions, not from process.** Write a test when:
