@@ -43,7 +43,7 @@ This is Godot 4.7
 - After adding/changing files under `SourceArt/`, run the `art-catalog` skill (script: `.claude/skills/art-catalog/scripts/art_catalog.py`).
 
 **Visual / rendering rules:**
-- `VISUAL_RULES.md` (repo root) — **this is a pixel-art game.** Read it before importing or rendering any texture, sprite, or VFX.
+- `VISUAL_RULES.md` (repo root) — **this is a storybook-style illustration game (soft cartoon, not pixel art).** Read it before importing or rendering any texture, sprite, or VFX.
 
 ---
 

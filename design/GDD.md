@@ -9,7 +9,7 @@
 
 ## 1. Overview
 
-Sprout Valley is a cozy 2D farming simulator viewed from a top-down camera. The player lives on a farm, clears land, plants crops, raises animals, processes raw goods into refined products, and delivers goods for money. The goal of the slice is simple and open-ended: **live on your farm and earn more and more money.**
+Sprout Valley is a cozy 2D farming simulator viewed from a top-down camera. The player runs a farm, clears land, plants crops, raises animals, processes raw goods into refined products, and delivers goods for money. There is **no on-screen player character** — the player acts on the world directly by clicking things (Hay Day style). The goal of the slice is simple and open-ended: **run your farm and earn more and more money.**
 
 This document scopes only the vertical slice. Systems are intentionally minimal but complete enough to demonstrate the full gameplay loop end to end.
 
@@ -36,11 +36,24 @@ This document scopes only the vertical slice. Systems are intentionally minimal 
 
 - **View:** Top-down 2D, orthographic.
 - **World:** A single fixed farm plot (the player's land).
-- **Player Character:** Walks around the farm, uses tools on blockers, interacts with buildings.
+- **Ground & backdrop:** The farm ground is **one large grassy background image** (not a tileset), with decorative clutter (rocks, flowers, grass tufts) baked in. A **road** is a separate sprite drawn on top of the ground — it acts as a permanent placement blocker (see §4). A separate **skyline background** sits behind/around the farm ground.
+- **Player Character:** None. The player interacts with the farm similar to an RTS game.
+- **Navigation:** None — the camera is **fixed**; the entire farm fits on one screen. No panning or scrolling.
+- **Art reference:** `SourceArt/cozy_farm_visualization.jpg` shows the intended look of the farm. Note it depicts a **mid-game** state — some trees already removed, and the cow pasture and chicken coop placed. It also shows a **greenhouse; there is no greenhouse in this game** — do not build one from the reference.
 - **Starting Structures (pre-placed, free):**
   - **Player Home** — the player's residence (non-functional flavor structure for the slice).
   - **Barn Storage** — stores all non-plant goods (animal products, processed goods, tools).
   - **Silo Storage** — stores all plant/crop goods (harvested crops).
+
+### 3.1 Interaction Model (Click → Tool Menu)
+
+All world interaction is done by **clicking objects directly**:
+
+- Clicking an interactable object pops up a small **tool menu** next to it, listing the tools/actions that apply to that object. Objects with no applicable interaction show no menu.
+- Only tools the player **owns** appear (or unowned ones appear disabled — implementer's choice for the slice).
+- Picking a tool/action from the menu performs it immediately on the clicked object.
+- **Example — Farm Plot:** clicking a farm plot offers the **Scythe** (harvest, if the crop is grown) and the **seeds** in the player's possession (plant, if the plot is empty).
+- **Example — Tree:** clicking a small tree offers the **Axe**; a large tree offers the **Saw** (see §4).
 
 ---
 
@@ -48,11 +61,14 @@ This document scopes only the vertical slice. Systems are intentionally minimal 
 
 Trees are scattered across the farm and act as **placement blockers** — the player cannot place plots or buildings on tiles occupied by trees.
 
-- To remove a blocker, the player must own the appropriate **tool**, then use it on the blocker.
-- **Tools (purchasable from shop):**
-  - **Axe** — chops down small trees.
-  - **Saw** — cuts down large trees.
-- Using a tool on a tree destroys the blocker and frees the underlying tiles for building/planting.
+The **road** is also a blocker: it behaves like a very large tree that is **unremovable** — no tool applies to it, and it can never be built on.
+
+- To remove a blocker, the player must own the appropriate **tool**, then select it from the tree's click menu (§3.1).
+- **Tools:**
+  - **Scythe** — harvests grown crops on farm plots. **The player starts with the Scythe** (free, not sold in the shop).
+  - **Axe** — chops down small trees (purchasable).
+  - **Saw** — cuts down large trees (purchasable).
+- Using the Axe/Saw on a tree destroys the blocker and frees the underlying tiles for building/planting.
 
 ---
 
@@ -90,7 +106,7 @@ When a limit is reached, the item is shown as owned/disabled in the shop.
 ## 6. Farming (Crops)
 
 - The player buys **Farm Plots** (max 25) and places them on cleared land.
-- Seeds are planted into plots; crops grow over time and are harvested.
+- Seeds are planted by clicking an empty plot and choosing a seed from its tool menu (§3.1); crops grow over time and are harvested by clicking the plot and choosing the **Scythe**.
 - Harvested crops are stored in the **Silo**.
 - **Harvest yield:** planting 1 seed returns **2 of the product** on harvest (e.g., plant 1 Corn → harvest 2 Corn). This gives the player a growing surplus to sell and reinvest.
 
@@ -200,14 +216,16 @@ For the slice, storage capacity may be treated as effectively unlimited, or give
 - **Bottom-left:** Shop button.
 - **Money display:** Persistent, likely top of screen.
 - **Shop overlay:** Tabbed (Farm Seeds, Animal Homes, Animals, Production Buildings).
-- **Placement mode:** After purchasing a placeable item, the player enters a placement state to position it on valid (cleared, unoccupied) tiles.
+- **Tool menu popup:** Small contextual menu that appears next to a clicked interactable object, listing applicable tools/actions (§3.1).
+- **Placement mode:** After purchasing a placeable item, the player enters a placement state to position it on valid (cleared, unoccupied, non-road) tiles.
 
 ---
 
 ## 12. Vertical Slice Scope Checklist
 
 **In scope:**
-- Top-down movement & camera
+- Fixed top-down camera showing the whole farm (no player character, no panning)
+- Click-to-interact tool menu (Scythe harvesting, seed planting, Axe/Saw)
 - Tree blockers + Axe/Saw removal
 - Shop overlay with 4 tabs and purchase limits
 - 4 crop types with plant/grow/harvest → silo
@@ -270,6 +288,7 @@ Each seed yields **2 crops** on harvest (see §6). Sell/XP values are per unit.
 | Item | Cost | Notes |
 |------|------|-------|
 | Farm Plot | 25 (scaling ok later) | Max 25 |
+| Scythe | Free (starting tool) | Harvests crops; not sold in shop |
 | Axe | 40 | Tool |
 | Saw | 40 | Tool |
 | Chicken Coop | 150 | Max 1 |

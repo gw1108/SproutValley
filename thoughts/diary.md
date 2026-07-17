@@ -15,5 +15,6 @@ It asked me some questions and I said:
 Can you make a recommendation for all those open questions?
 ---
 
+Created an art catalog skill to be a reusable way for LLMs to quickly navigate these giant asset packs. Previously had issues where LLMs didn't really utilize asset packs I provided. Was a lot of back and forth planning with fable.
 
-
+---
