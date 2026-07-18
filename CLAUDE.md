@@ -43,7 +43,8 @@ This is Godot 4.7
 - After adding/changing files under `SourceArt/`, run the `art-catalog` skill (script: `.claude/skills/art-catalog/scripts/art_catalog.py`).
 
 **Visual / rendering rules:**
-- `VISUAL_RULES.md` (repo root) — **this is a storybook-style illustration game (soft cartoon, not pixel art).** Read it before importing or rendering any texture, sprite, or VFX.
+- `VISUAL_RULES.md` (repo root) — **this is a storybook-style illustration game (soft cartoon, not pixel art).** Read it before importing or generating any texture, sprite, or VFX.
+- **Game size: the Godot base viewport is 960×540** (window can stretch). Size art for that: author/import at roughly 2× the largest on-screen size (see the *Target res* column in `design/art-todo.md`), not at whatever resolution a generator emits — do NOT ship 1024×1024 masters for every sprite; downscale on import. When generating art with agy, bundle related images (animation poses, growth stages, icon families) into one equal-cell sprite-sheet request instead of one request per image.
 
 ---
 

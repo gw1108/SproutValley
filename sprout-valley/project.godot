@@ -16,10 +16,17 @@ run/main_scene="res://scenes/Main.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 config/icon="res://icon.svg"
 
+[autoload]
+
+BalanceData="*res://scripts/autoload/balance_data.gd"
+ItemDB="*res://scripts/autoload/item_db.gd"
+Game="*res://scripts/autoload/game_state.gd"
+
 [display]
 
+window/size/viewport_width=960
+window/size/viewport_height=540
 window/stretch/mode="canvas_items"
-window/stretch/aspect="expand"
 
 [physics]
 
@@ -27,7 +34,6 @@ window/stretch/aspect="expand"
 
 [rendering]
 
-textures/canvas_textures/default_texture_filter=0
 rendering_device/driver.windows="d3d12"
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"

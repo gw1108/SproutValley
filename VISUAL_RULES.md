@@ -25,6 +25,12 @@ This is a **2D game** with a **storybook-style illustration** look: soft cartoon
 - **Resize only if** the sheet is **unreasonably large** for the project (huge per-frame px / VRAM cost).
 - For **sliced sprite sheets**, cell sizes should still divide evenly (`width / cols`, `height / rows` are whole numbers) so slicing is clean. Prefer **offline** resizing (slice → resize each frame → re-pack) to avoid cross-frame seam bleed; Godot's per-texture Import `Process → Size Limit` is acceptable for **single, non-sliced** textures.
 
+## Generating art assets (agy / image models)
+
+- **Camera angle: world sprites are always drawn from a top-down camera** — the game's gentle 3/4 top-down view (like the `SourceArt/cozy_farm_visualization.jpg` reference). Say it explicitly in every generation prompt for world objects, buildings, animals, and crops so nothing comes back at eye level. (UI panels and item icons are the exception: straight-on view.)
+- **Always state a target resolution.** Every asset request/entry must carry its intended in-game size (see the *Target res* column in `design/art-todo.md`; base viewport is 960×540, author at ~2× on-screen size). Generator masters land at ~1024px regardless — keep the master under `SourceArt/generated/` and downscale to the target on import.
+- **Pack similar assets into one sprite-sheet request.** Animation poses (idle+eat), growth stages, icon families, and UI state variants go into a single request as a horizontal row of equal square cells (consistent scale, small per-cell margin, no divider lines) so sheets slice cleanly and quota goes further.
+
 ## Import defaults
 
 When importing a 2D texture:
