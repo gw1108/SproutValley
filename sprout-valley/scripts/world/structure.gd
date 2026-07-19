@@ -92,13 +92,11 @@ func start_craft(recipe_id: String) -> bool:
 	return true
 
 func home_rect() -> Rect2:
-	## Area animals wander in. The pasture is a flat fenced field, so animals
-	## roam inside it; for tall buildings (coop) they roam a strip in front.
+	## Area animals wander in: a strip in front of their home building
+	## (barn for cows, coop for chickens).
 	var cs := BalanceData.get_value("grid_cell", 48.0)
 	var top_left := global_position - Vector2(footprint.x * 0.5, float(footprint.y)) * cs
 	var size := Vector2(footprint) * cs
-	if building_id == "cow_pasture":
-		return Rect2(top_left, size).grow(-14.0)
 	return Rect2(top_left.x - 16.0, global_position.y - 14.0, size.x + 32.0, 52.0)
 
 func click_rect() -> Rect2:

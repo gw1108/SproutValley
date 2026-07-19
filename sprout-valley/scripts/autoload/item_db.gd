@@ -7,21 +7,21 @@ const CROPS_DIR := "res://assets/crops/"
 const BUILDINGS_DIR := "res://assets/buildings/"
 const WORLD_DIR := "res://assets/world/"
 
-# Goods that exist in inventory. storage: silo (crops) | barn (everything else).
+# Goods that exist in inventory (viewed by tapping the Player Home).
 var items := {
-	"wheat": {"name": "Wheat", "icon": "icon_wheat", "sell": "wheat_sell", "xp": "wheat_xp", "storage": "silo"},
-	"beets": {"name": "Beets", "icon": "icon_beets", "sell": "beets_sell", "xp": "beets_xp", "storage": "silo"},
-	"cabbage": {"name": "Cabbage", "icon": "icon_cabbage", "sell": "cabbage_sell", "xp": "cabbage_xp", "storage": "silo"},
-	"egg": {"name": "Egg", "icon": "icon_egg", "sell": "egg_sell", "xp": "egg_xp", "storage": "barn"},
-	"milk": {"name": "Milk", "icon": "icon_milk", "sell": "milk_sell", "xp": "milk_xp", "storage": "barn"},
-	"butter": {"name": "Butter", "icon": "icon_butter", "sell": "butter_sell", "xp": "butter_xp", "storage": "barn"},
-	"bread": {"name": "Bread", "icon": "icon_bread", "sell": "bread_sell", "xp": "bread_xp", "storage": "barn"},
-	"chicken_feed": {"name": "Chicken Feed", "icon": "icon_chicken_feed", "sell": "", "xp": "", "storage": "barn"},
-	"cow_feed": {"name": "Cow Feed", "icon": "icon_cow_feed", "sell": "", "xp": "", "storage": "barn"},
-	"wheat_seed": {"name": "Wheat Seed", "icon": "icon_wheat_seed", "sell": "", "xp": "", "storage": "barn"},
-	"beets_seed": {"name": "Beet Seed", "icon": "icon_beets_seed", "sell": "", "xp": "", "storage": "barn"},
-	"cabbage_seed": {"name": "Cabbage Seed", "icon": "icon_cabbage_seed", "sell": "", "xp": "", "storage": "barn"},
-	"axe": {"name": "Axe", "icon": "icon_axe", "sell": "", "xp": "", "storage": "barn"},
+	"wheat": {"name": "Wheat", "icon": "icon_wheat", "sell": "wheat_sell", "xp": "wheat_xp"},
+	"beets": {"name": "Beets", "icon": "icon_beets", "sell": "beets_sell", "xp": "beets_xp"},
+	"cabbage": {"name": "Cabbage", "icon": "icon_cabbage", "sell": "cabbage_sell", "xp": "cabbage_xp"},
+	"egg": {"name": "Egg", "icon": "icon_egg", "sell": "egg_sell", "xp": "egg_xp"},
+	"milk": {"name": "Milk", "icon": "icon_milk", "sell": "milk_sell", "xp": "milk_xp"},
+	"butter": {"name": "Butter", "icon": "icon_butter", "sell": "butter_sell", "xp": "butter_xp"},
+	"bread": {"name": "Bread", "icon": "icon_bread", "sell": "bread_sell", "xp": "bread_xp"},
+	"chicken_feed": {"name": "Chicken Feed", "icon": "icon_chicken_feed", "sell": "", "xp": ""},
+	"cow_feed": {"name": "Cow Feed", "icon": "icon_cow_feed", "sell": "", "xp": ""},
+	"wheat_seed": {"name": "Wheat Seed", "icon": "icon_wheat_seed", "sell": "", "xp": ""},
+	"beets_seed": {"name": "Beet Seed", "icon": "icon_beets_seed", "sell": "", "xp": ""},
+	"cabbage_seed": {"name": "Cabbage Seed", "icon": "icon_cabbage_seed", "sell": "", "xp": ""},
+	"axe": {"name": "Axe", "icon": "icon_axe", "sell": "", "xp": ""},
 }
 
 # crop id -> seed item, grow time key. All crops share the same planted look
@@ -46,11 +46,9 @@ var recipes := {
 # for on-screen sprite width.
 var buildings := {
 	"player_home": {"name": "Home", "tex": "player_home", "footprint": Vector2i(3, 2), "disp": "disp_player_home"},
-	"barn": {"name": "Barn", "tex": "barn", "footprint": Vector2i(3, 2), "disp": "disp_barn"},
-	"silo": {"name": "Silo", "tex": "silo", "footprint": Vector2i(2, 2), "disp": "disp_silo"},
+	"barn": {"name": "Barn", "tex": "barn", "footprint": Vector2i(3, 2), "disp": "disp_barn", "cost": "barn_cost", "max": 1},
 	"delivery_box": {"name": "Delivery Box", "tex": "delivery_box", "footprint": Vector2i(2, 1), "disp": "disp_delivery_box", "dir": WORLD_DIR},
 	"chicken_coop": {"name": "Chicken Coop", "tex": "chicken_coop", "footprint": Vector2i(2, 2), "disp": "disp_chicken_coop", "cost": "chicken_coop_cost", "max": 1},
-	"cow_pasture": {"name": "Cow Pasture", "tex": "cow_pasture", "footprint": Vector2i(4, 3), "disp": "disp_cow_pasture", "cost": "cow_pasture_cost", "max": 1},
 	"feed_mill": {"name": "Feed Mill", "tex": "feed_mill", "footprint": Vector2i(2, 2), "disp": "disp_feed_mill", "cost": "feed_mill_cost", "max": 1},
 	"dairy_barn": {"name": "Dairy Barn", "tex": "dairy_barn", "footprint": Vector2i(3, 2), "disp": "disp_dairy_barn", "cost": "dairy_barn_cost", "max": 1},
 	"bakery": {"name": "Bakery", "tex": "bakery", "footprint": Vector2i(2, 2), "disp": "disp_bakery", "cost": "bakery_cost", "max": 1},

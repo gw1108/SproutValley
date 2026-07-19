@@ -54,3 +54,13 @@ I only liked the cow/chicken art generally. So I had to redo all the art with ma
 > Fix up the game to use the new art assets and stop using the deleted art assets. The main background should be empty_farm_landscape.png. The roads are just built in to the background not a separate image. Use house 2 for the player house. There is now different crops: wheat, beets, and cabbage. All share the same planted version with 2 variations that should be picked randomly on planting. They do not have an intermediate phase so remove that. And there is a new setting and shop button.
 
 ---
+
+Looks like Claude just made everything plop in during runtime. So asking it to redo everything as nodes.
+
+> Right now it looks like the godot game is not using nodes? Make it easier for a human designer to edit things and move things around with nodes to visually represent the background, nodes that block the road, nodes that spawn the starting tree.
+
+---
+
+> Remove the barn and silo as starting buildings. And remove the silo building and functionality entirely. Instead of viewing the player inventory by tapping the silo they should just tap their existing player home. And they should be able to buy the barn which controls the cow placement.
+
+Then I asked it to iterate. From here on I just ask it a lot of stuff so I won't be keeping track. Notice things wrong or weird with the game and I either edit the godot scene, csv, or just ask claude to do it.

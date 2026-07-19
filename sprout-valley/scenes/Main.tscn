@@ -1,6 +1,165 @@
-[gd_scene load_steps=2 format=3 uid="uid://bmn8x2qk1jvla"]
+[gd_scene format=3 uid="uid://bmn8x2qk1jvla"]
 
-[ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
+[ext_resource type="Script" uid="uid://dbo70q1fumfsv" path="res://scripts/main.gd" id="1_main"]
+[ext_resource type="Texture2D" uid="uid://dh7jhn27aoo46" path="res://assets/background/farm_landscape.png" id="2_bg"]
+[ext_resource type="Script" uid="uid://dfhj2boxfcboo" path="res://scripts/world/grid_blocker.gd" id="3_blocker"]
+[ext_resource type="Script" uid="uid://d20js01c08t48" path="res://scripts/world/structure_spawn.gd" id="4_structure"]
+[ext_resource type="Script" uid="uid://dek7li7r2jmr3" path="res://scripts/world/tree_spawn.gd" id="5_tree"]
 
-[node name="Main" type="Node2D"]
+[node name="Main" type="Node2D" unique_id=739222035]
 script = ExtResource("1_main")
+
+[node name="Background" type="Sprite2D" parent="." unique_id=561697444]
+z_index = -10
+scale = Vector2(0.697674, 0.703125)
+texture = ExtResource("2_bg")
+centered = false
+
+[node name="Blockers" type="Node2D" parent="." unique_id=1949734838]
+
+[node name="RoadRow0" type="Node2D" parent="Blockers" unique_id=756934302]
+position = Vector2(336, 72)
+rotation = 0.46425757
+script = ExtResource("3_blocker")
+cells = Vector2i(16, 1)
+
+[node name="RoadRow1" type="Node2D" parent="Blockers" unique_id=736314316]
+position = Vector2(96, 264)
+rotation = -0.6981317
+script = ExtResource("3_blocker")
+cells = Vector2i(4, 1)
+
+[node name="RoadRow2Left" type="Node2D" parent="Blockers" unique_id=756381257]
+position = Vector2(147, 262)
+rotation = 0.38951796
+scale = Vector2(1.8160217, 1)
+script = ExtResource("3_blocker")
+cells = Vector2i(4, 1)
+
+[node name="RoadRow2Right" type="Node2D" parent="Blockers" unique_id=649376204]
+position = Vector2(440, 398)
+rotation = -0.4846633
+scale = Vector2(2.14296, 1)
+script = ExtResource("3_blocker")
+cells = Vector2i(3, 1)
+
+[node name="RoadRow2Right2" type="Node2D" parent="Blockers" unique_id=244779475]
+position = Vector2(-27.000015, 524)
+rotation = -0.51705164
+scale = Vector2(2.523, 1)
+script = ExtResource("3_blocker")
+cells = Vector2i(3, 1)
+
+[node name="StartingStructures" type="Node2D" parent="." unique_id=1226946282]
+
+[node name="PlayerHome" type="Node2D" parent="StartingStructures" unique_id=1444176670]
+position = Vector2(672, 120)
+script = ExtResource("4_structure")
+building_id = "player_home"
+
+[node name="DeliveryBox" type="Node2D" parent="StartingStructures" unique_id=382005410]
+position = Vector2(816, 408)
+script = ExtResource("4_structure")
+building_id = "delivery_box"
+
+[node name="TreeSpawns" type="Node2D" parent="." unique_id=1466796988]
+
+[node name="Tree1" type="Node2D" parent="TreeSpawns" unique_id=957152612]
+position = Vector2(576, 120)
+script = ExtResource("5_tree")
+
+[node name="Tree2" type="Node2D" parent="TreeSpawns" unique_id=451121756]
+position = Vector2(336, 216)
+script = ExtResource("5_tree")
+
+[node name="Tree3" type="Node2D" parent="TreeSpawns" unique_id=1144749490]
+position = Vector2(768, 216)
+script = ExtResource("5_tree")
+
+[node name="Tree4" type="Node2D" parent="TreeSpawns" unique_id=622417536]
+position = Vector2(240, 264)
+script = ExtResource("5_tree")
+
+[node name="Tree5" type="Node2D" parent="TreeSpawns" unique_id=1982862437]
+position = Vector2(480, 312)
+script = ExtResource("5_tree")
+
+[node name="Tree6" type="Node2D" parent="TreeSpawns" unique_id=742447897]
+position = Vector2(576, 360)
+script = ExtResource("5_tree")
+
+[node name="Tree7" type="Node2D" parent="TreeSpawns" unique_id=811023194]
+position = Vector2(528, 456)
+script = ExtResource("5_tree")
+
+[node name="Tree8" type="Node2D" parent="TreeSpawns" unique_id=1093304093]
+position = Vector2(0, 264)
+script = ExtResource("5_tree")
+
+[node name="Tree9" type="Node2D" parent="TreeSpawns" unique_id=211568783]
+position = Vector2(48, 312)
+script = ExtResource("5_tree")
+
+[node name="Tree10" type="Node2D" parent="TreeSpawns" unique_id=514807220]
+position = Vector2(96, 168)
+script = ExtResource("5_tree")
+
+[node name="Tree11" type="Node2D" parent="TreeSpawns" unique_id=287327616]
+position = Vector2(48, 216)
+script = ExtResource("5_tree")
+
+[node name="Tree12" type="Node2D" parent="TreeSpawns" unique_id=1986046506]
+position = Vector2(0, 408)
+script = ExtResource("5_tree")
+
+[node name="Tree13" type="Node2D" parent="TreeSpawns" unique_id=309134263]
+position = Vector2(672, 456)
+script = ExtResource("5_tree")
+
+[node name="Tree14" type="Node2D" parent="TreeSpawns" unique_id=113378515]
+position = Vector2(624, 408)
+script = ExtResource("5_tree")
+
+[node name="Tree15" type="Node2D" parent="TreeSpawns" unique_id=1192520012]
+position = Vector2(336, 456)
+script = ExtResource("5_tree")
+
+[node name="Tree16" type="Node2D" parent="TreeSpawns" unique_id=1407360347]
+position = Vector2(384, 504)
+script = ExtResource("5_tree")
+
+[node name="Tree17" type="Node2D" parent="TreeSpawns" unique_id=1201121040]
+position = Vector2(384, 456)
+script = ExtResource("5_tree")
+
+[node name="Tree18" type="Node2D" parent="TreeSpawns" unique_id=1340527886]
+position = Vector2(432, 456)
+script = ExtResource("5_tree")
+
+[node name="Tree19" type="Node2D" parent="TreeSpawns" unique_id=1566205017]
+position = Vector2(912, 264)
+script = ExtResource("5_tree")
+
+[node name="Tree20" type="Node2D" parent="TreeSpawns" unique_id=1763891315]
+position = Vector2(576, 72)
+script = ExtResource("5_tree")
+
+[node name="Tree21" type="Node2D" parent="TreeSpawns" unique_id=916535032]
+position = Vector2(528, 120)
+script = ExtResource("5_tree")
+
+[node name="Tree22" type="Node2D" parent="TreeSpawns" unique_id=569991116]
+position = Vector2(912, 120)
+script = ExtResource("5_tree")
+
+[node name="Tree23" type="Node2D" parent="TreeSpawns" unique_id=1737549208]
+position = Vector2(864, 216)
+script = ExtResource("5_tree")
+
+[node name="Tree24" type="Node2D" parent="TreeSpawns" unique_id=1160211876]
+position = Vector2(912, 216)
+script = ExtResource("5_tree")
+
+[node name="Tree25" type="Node2D" parent="TreeSpawns" unique_id=296319073]
+position = Vector2(720, 408)
+script = ExtResource("5_tree")

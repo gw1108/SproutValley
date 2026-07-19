@@ -1,27 +1,18 @@
 extends Node2D
 ## Main scene: builds the farm world, HUD and UI, and wires interactions.
+## The background painting, road/decor blockers, pre-placed structures and
+## starting trees are authored as nodes in Main.tscn (Background, Blockers,
+## StartingStructures, TreeSpawns) so a designer can move them in the editor.
 
-const VIEW := Vector2(960, 540)
-
-# Cells covered by art baked into farm_landscape.png (dirt roads, the village
-# cottage, well, fences, big trees). '#' = permanently occupied, '.' = free.
-# 18 cols x 8 rows, matching FarmGrid. Derived from road-pixel coverage of the
-# background; tweak here if the background painting changes.
-const BLOCKED_MAP: Array[String] = [
-	"##########........",
-	".############.....",
-	"..####.....###....",
-	".###........###.#.",
-	"######.....######.",
-	"########.##.....##",
-	".########.........",
-	"########..........",
-]
+@onready var blockers: Node2D = $Blockers
+@onready var starting_structures: Node2D = $StartingStructures
+@onready var tree_spawns: Node2D = $TreeSpawns
 
 var grid: FarmGrid
 var hud: Hud
 var shop: ShopOverlay
 var sell_panel: SellPanel
+var inventory_panel: InventoryPanel
 var radial: RadialMenu
 var interaction: InteractionManager
 
@@ -37,26 +28,28 @@ func _ready() -> void:
 	grid = FarmGrid.new()
 	add_child(grid)
 	_build_sfx()
-	_build_background()
+	_apply_blockers()
 	_build_layers()
 	_build_ui()
 	_place_starting_structures()
-	_scatter_trees()
+	_spawn_starting_trees()
 
-func _build_background() -> void:
-	# one full-scene painting; roads and edge decor are baked in
-	var ground := Sprite2D.new()
-	ground.texture = ItemDB.tex("res://assets/background/farm_landscape.png")
-	ground.centered = false
-	ground.scale = VIEW / Vector2(ground.texture.get_size())
-	ground.z_index = -10
-	add_child(ground)
+func _apply_blockers() -> void:
+	# cells the painted roads/decor pass through (GridBlocker nodes in the
+	# scene, freely rotatable): never free
+	for b in blockers.get_children():
+		for cell in b.blocked_cells(grid):
+			grid.occupy(cell, Vector2i.ONE, self)
+	if "dump_blocked" in OS.get_cmdline_user_args():
+		_dump_blocked()
 
-	# cells the painted roads/decor pass through: never free
-	for cy in range(BLOCKED_MAP.size()):
-		for cx in range(BLOCKED_MAP[cy].length()):
-			if BLOCKED_MAP[cy][cx] == "#":
-				grid.occupy(Vector2i(cx, cy), Vector2i.ONE, self)
+func _dump_blocked() -> void:
+	# dev tooling: ASCII map of blocker-occupied cells ('#'), for probes
+	for cy in grid.rows:
+		var row := ""
+		for cx in grid.cols:
+			row += "#" if grid.occupant(Vector2i(cx, cy)) != null else "."
+		print("BLOCKED %s" % row)
 
 func _build_layers() -> void:
 	plot_layer = Node2D.new()
@@ -84,6 +77,8 @@ func _build_ui() -> void:
 	add_child(shop)
 	sell_panel = SellPanel.new()
 	add_child(sell_panel)
+	inventory_panel = InventoryPanel.new()
+	add_child(inventory_panel)
 
 	interaction = InteractionManager.new()
 	interaction.main = self
@@ -101,15 +96,10 @@ func _on_shop_pressed() -> void:
 	shop.open_shop()
 
 func _place_starting_structures() -> void:
-	# open grass pockets of the painted landscape (see BLOCKED_MAP)
-	_spawn_preplaced("player_home", Vector2i(13, 0))
-	_spawn_preplaced("silo", Vector2i(16, 0))
-	_spawn_preplaced("barn", Vector2i(13, 5))
-	_spawn_preplaced("delivery_box", Vector2i(16, 6))
-
-func _spawn_preplaced(id: String, cell: Vector2i) -> void:
-	# delivery box may sit on road-adjacent cells that are still free
-	spawn_structure(id, cell)
+	# StructureSpawn nodes in the scene, sitting on open grass pockets of the
+	# painted landscape
+	for s in starting_structures.get_children():
+		spawn_structure(s.building_id, s.grid_cell(grid))
 
 func spawn_structure(id: String, cell: Vector2i) -> Structure:
 	var s := Structure.new()
@@ -132,7 +122,7 @@ func spawn_plot(cell: Vector2i) -> FarmPlot:
 	return p
 
 func spawn_animal(kind: String) -> void:
-	var home_id := "chicken_coop" if kind == "chicken" else "cow_pasture"
+	var home_id := "chicken_coop" if kind == "chicken" else "barn"
 	var home: Structure = structures.get(home_id)
 	if home == null:
 		return
@@ -140,18 +130,12 @@ func spawn_animal(kind: String) -> void:
 	a.setup(kind, home)
 	world.add_child(a)
 
-func _scatter_trees() -> void:
-	var rng := RandomNumberGenerator.new()
-	rng.seed = 20260718
-	var n := int(BalanceData.get_value("tree_small_count", 7.0))
-	var placed := 0
-	var guard := 0
-	while placed < n and guard < 1000:
-		guard += 1
-		var cell := Vector2i(rng.randi_range(0, grid.cols - 1), rng.randi_range(0, grid.rows - 2))
+func _spawn_starting_trees() -> void:
+	# one FarmTree per TreeSpawn node in the scene
+	for m in tree_spawns.get_children():
+		var cell: Vector2i = m.grid_cell(grid)
 		if grid.is_free(cell, Vector2i.ONE):
 			_spawn_tree(cell)
-			placed += 1
 
 func _spawn_tree(cell: Vector2i) -> void:
 	var t := FarmTree.new()
@@ -177,6 +161,9 @@ func play_sfx(n: String) -> void:
 
 func open_sell_panel() -> void:
 	sell_panel.open_panel()
+
+func open_inventory_panel() -> void:
+	inventory_panel.open_panel()
 
 func on_tree_chopped() -> void:
 	var cam_shake := create_tween()

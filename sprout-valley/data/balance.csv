@@ -25,14 +25,14 @@ farm_plot_cost,25,
 farm_plot_max,25,
 axe_cost,40,consumed on use (user direction)
 chicken_coop_cost,150,
-cow_pasture_cost,250,
+barn_cost,250,home for cows (replaced cow pasture)
 feed_mill_cost,200,
 dairy_barn_cost,300,
 bakery_cost,300,
 chicken_cost,30,
 cow_cost,60,
 chicken_max,6,housing capacity of the single coop
-cow_max,4,housing capacity of the single pasture
+cow_max,4,housing capacity of the single barn
 chicken_cycle_time,20,production seconds after eating
 cow_cycle_time,60,
 animal_eat_duration,2.5,seconds showing the eat pose
@@ -48,9 +48,7 @@ disp_tree_small,72,
 disp_tree_stump,44,
 disp_player_home,150,
 disp_barn,150,
-disp_silo,80,
 disp_chicken_coop,105,
-disp_cow_pasture,195,
 disp_dairy_barn,140,
 disp_bakery,105,
 disp_feed_mill,115,
@@ -61,3 +59,4 @@ disp_crop,42,crop sprite width on a plot
 animal_wander_speed,22,px per second
 radial_button_size,52,radial menu button diameter px
 radial_radius,56,radial menu ring radius px
+blocker_min_coverage,0.02,min fraction of a cell a road blocker must cover to block it

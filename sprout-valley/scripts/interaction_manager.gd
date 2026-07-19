@@ -138,6 +138,13 @@ func _structure_options(s: Structure) -> Array:
 			"label": "Sell goods",
 			"callback": Callable(main, "open_sell_panel"),
 		}]
+	if s.building_id == "player_home":
+		return [{
+			"id": "inventory",
+			"icon": ItemDB.building_tex("player_home"),
+			"label": "View inventory",
+			"callback": Callable(main, "open_inventory_panel"),
+		}]
 	var recipes := s.my_recipes()
 	if recipes.is_empty():
 		return []

@@ -25,7 +25,7 @@ This document scopes only the vertical slice. Systems are intentionally minimal 
 1. **Clear** blockers (trees) using tools to open up buildable land.
 2. **Buy** seeds, farm plots, animal homes, animals, and production buildings from the shop.
 3. **Grow** crops on farm plots and **raise** animals in their homes.
-4. **Harvest** crops (→ silo) and collect animal products (→ barn).
+4. **Harvest** crops and collect animal products (→ shared inventory, viewed at the Player Home).
 5. **Process** raw goods into refined products in production buildings.
 6. **Deliver** goods to earn money.
 7. **Reinvest** money into more land, buildings, and animals — repeat.
@@ -41,9 +41,9 @@ This document scopes only the vertical slice. Systems are intentionally minimal 
 - **Navigation:** None — the camera is **fixed**; the entire farm fits on one screen. No panning or scrolling.
 - **Art reference:** `SourceArt/cozy_farm_visualization.jpg` shows the intended look of the farm. Note it depicts a **mid-game** state — some trees already removed, and the cow pasture and chicken coop placed. It also shows a **greenhouse; there is no greenhouse in this game** — do not build one from the reference.
 - **Starting Structures (pre-placed, free):**
-  - **Player Home** — the player's residence (non-functional flavor structure for the slice).
-  - **Barn Storage** — stores all non-plant goods (animal products, processed goods, tools).
-  - **Silo Storage** — stores all plant/crop goods (harvested crops).
+  - **Player Home** — the player's residence; tapping it opens the **inventory panel** (§10).
+
+> **Cut content (2026-07):** the Barn and Silo were originally free starting storage buildings (Silo = crops, Barn = everything else). The **Silo is cut entirely** — all goods live in one shared inventory viewed at the Player Home. The **Barn is now a purchasable animal home for cows** (replacing the Cow Pasture, which is cut).
 
 ### 3.1 Interaction Model (Click → Tool Menu)
 
@@ -82,7 +82,7 @@ The shop is opened via a **button in the bottom-left** of the HUD. It opens a fu
 | Tab | Contents |
 |-----|----------|
 | **Farm Seeds** | Corn Seed, Wheat Seed, Soybean Seed, Potato Seed, Axe (Saw: cut content, §4) |
-| **Animal Homes** | Chicken Coop, Cow Pasture, Dairy Barn, Bakery, Feed Mill |
+| **Animal Homes** | Chicken Coop, Barn, Dairy Barn, Bakery, Feed Mill |
 | **Animals** | Chickens, Cows |
 | **Production Buildings** | Dairy Barn, Bakery, Feed Mill |
 
@@ -94,7 +94,7 @@ The shop is opened via a **button in the bottom-left** of the HUD. It opens a fu
 |------|-----------|
 | Farm Plot | 25 |
 | Chicken Coop | 1 |
-| Cow Pasture | 1 |
+| Barn | 1 |
 | Dairy Barn | 1 |
 | Bakery | 1 |
 | Feed Mill | 1 |
@@ -108,7 +108,7 @@ When a limit is reached, the item is shown as owned/disabled in the shop.
 
 - The player buys **Farm Plots** (max 25) and places them on cleared land.
 - Seeds are planted by clicking an empty plot and choosing a seed from its tool menu (§3.1); crops grow over time and are harvested by clicking the plot and choosing the **Scythe**.
-- Harvested crops are stored in the **Silo**.
+- Harvested crops go into the shared **inventory** (viewed at the Player Home, §10).
 - **Harvest yield:** planting 1 seed returns **2 of the product** on harvest (e.g., plant 1 Corn → harvest 2 Corn). This gives the player a growing surplus to sell and reinvest.
 
 ### 6.1 Crop Types
@@ -124,18 +124,18 @@ Each crop has: seed cost, grow time, and harvest yield/value (to be tuned).
 ## 7. Animals
 
 - Animals are housed in animal homes and produce goods over time.
-- Animal products are stored in the **Barn**.
+- Animal products go into the shared **inventory** (§10).
 
 | Home | Animal | Produces | Production Time |
 |------|--------|----------|-----------------|
 | Chicken Coop | Chicken | Eggs | ~20s |
-| Cow Pasture | Cow | Milk | ~60s |
+| Barn | Cow | Milk | ~60s |
 
 ### 7.1 Feeding (Required)
 Animals **require feed to produce**. The cycle is:
 1. A hungry animal **eats** one unit of its feed (Chicken Feed or Cow Feed).
 2. Eating starts a production cycle: **~20s for chickens**, **~60s for cows**.
-3. When the cycle completes, the product (Egg / Milk) is deposited in the **Barn** and the animal becomes hungry again.
+3. When the cycle completes, the product (Egg / Milk) is deposited in the **inventory** and the animal becomes hungry again.
 
 Animals **only eat when they are not currently producing** — an animal mid-cycle ignores feed until its product is ready. If no feed is available, the animal simply waits (idle, no product) until feed is supplied. This keeps the no-fail cozy feel: animals never die, they just pause.
 
@@ -201,14 +201,13 @@ xpToNextLevel(L) = round( 4 * (1 + ln(L)) )      // L = current level, starting 
 
 ---
 
-## 10. Storage
+## 10. Storage / Inventory
 
-| Storage | Holds |
-|---------|-------|
-| **Silo** | Plant/crop goods (harvested crops) |
-| **Barn** | Everything else (animal products, processed goods, tools) |
+All goods (crops, animal products, processed goods, seeds, tools) live in one shared **inventory**. Tapping the **Player Home** opens a read-only inventory panel listing every owned item with its count.
 
 For the slice, storage capacity may be treated as effectively unlimited, or given generous caps.
+
+> **Cut content (2026-07):** the split Silo (crops) / Barn (everything else) storage buildings were cut in favor of the single Player-Home-viewed inventory. The Barn now serves as the cow home (§7).
 
 ---
 
@@ -229,15 +228,16 @@ For the slice, storage capacity may be treated as effectively unlimited, or give
 - Click-to-interact tool menu (Scythe harvesting, seed planting, Axe)
 - Tree blockers + Axe removal
 - Shop overlay with 4 tabs and purchase limits
-- 4 crop types with plant/grow/harvest → silo
-- Chicken Coop + Cow Pasture, 2 animal types → barn
+- 4 crop types with plant/grow/harvest → inventory
+- Chicken Coop + Barn, 2 animal types → inventory
 - Dairy Barn, Bakery, Feed Mill processing
 - Delivery-for-money mechanism
-- Barn + Silo storage
-- Player Home (flavor)
+- Shared inventory viewed at the Player Home
+- Player Home (inventory viewer)
 
 **Cut content:**
 - Large (2×2) trees and the Saw tool (see §4)
+- Silo + Barn starting storage buildings and the Cow Pasture (see §3, §10)
 
 **Out of scope (post-slice):**
 - Multiple crop tiers / seasons / weather
@@ -296,12 +296,12 @@ Each seed yields **2 crops** on harvest (see §6). Sell/XP values are per unit.
 | Axe | 40 | Tool |
 | ~~Saw~~ | ~~40~~ | Cut content (see §4) |
 | Chicken Coop | 150 | Max 1 |
-| Cow Pasture | 250 | Max 1 |
+| Barn | 250 | Max 1; home for cows |
 | Feed Mill | 200 | Max 1 |
 | Dairy Barn | 300 | Max 1 |
 | Bakery | 300 | Max 1 |
 | Chicken | 30 | Housed in coop |
-| Cow | 60 | Housed in pasture |
+| Cow | 60 | Housed in barn |
 
 **Products (processed) sell values**
 

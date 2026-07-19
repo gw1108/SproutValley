@@ -130,10 +130,10 @@ func _refresh() -> void:
 				-1, Game.placed("farm_plot") >= int(BalanceData.get_value("farm_plot_max", 25.0)))
 		1:
 			_add_building_card("chicken_coop", "Home for chickens")
-			_add_building_card("cow_pasture", "Home for cows")
+			_add_building_card("barn", "Home for cows")
 		2:
 			_add_animal_card("chicken", "chicken_coop", "Eats Chicken Feed, lays Eggs")
-			_add_animal_card("cow", "cow_pasture", "Eats Cow Feed, gives Milk")
+			_add_animal_card("cow", "barn", "Eats Cow Feed, gives Milk")
 		3:
 			_add_building_card("feed_mill", "Crafts Chicken & Cow Feed")
 			_add_building_card("dairy_barn", "3 Milk → Butter")
