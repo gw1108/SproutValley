@@ -24,7 +24,7 @@ See `SourceArt/_catalog/pending_updates.jsonl`; surface these to the developer.
 
 ## Contents
 
-916 raster assets, 914 described, 21 contact sheets.
+916 raster assets, 916 described, 21 contact sheets.
 
 Skipped (not raster art): 434× .svg, 6× .ogg, 4× .pdn, 2× .url, 2× .ttf, 1× .md, 1× .txt
 
@@ -34,7 +34,7 @@ Skipped (not raster art): 434× .svg, 6× .ogg, 4× .pdn, 2× .url, 2× .ttf, 1�
 | `SourceArt/generated/animals` | 4 | 4 | sheet_0033.png |
 | `SourceArt/generated/icons` | 10 | 10 | sheet_0033.png–sheet_0053.png |
 | `SourceArt/generated/ui` | 8 | 8 | sheet_0033.png |
-| `SourceArt/generated/world` | 6 | 4 | sheet_0033.png–sheet_0054.png |
+| `SourceArt/generated/world` | 6 | 6 | sheet_0033.png–sheet_0054.png |
 | `SourceArt/kenney_ui-pack` | 2 | 2 | sheet_0051.png |
 | `SourceArt/kenney_ui-pack/PNG/Blue/Default` | 82 | 82 | sheet_0033.png–sheet_0035.png |
 | `SourceArt/kenney_ui-pack/PNG/Blue/Double` | 82 | 82 | sheet_0035.png–sheet_0036.png |

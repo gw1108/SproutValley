@@ -2,7 +2,7 @@ extends Node
 class_name InteractionManager
 ## Owns the click-driven interaction flow:
 ##   IDLE     - click an object -> radial menu of applicable actions
-##   PLANT    - hold & drag over empty plots to scatter seeds
+##   PLANT    - hold & drag over empty plots to plant crops from stock
 ##   HARVEST  - hold & drag over mature plots to scythe them
 ##   PLACE    - ghost follows mouse, click to place purchase
 
@@ -95,12 +95,11 @@ func _plot_options(plot: FarmPlot) -> Array:
 	var options: Array = []
 	if plot.state == FarmPlot.State.EMPTY:
 		for crop_id in ItemDB.crops:
-			var seed_id: String = ItemDB.crops[crop_id]["seed"]
-			var owned := Game.count(seed_id)
+			var owned := Game.count(crop_id)
 			options.append({
 				"id": crop_id,
-				"icon": ItemDB.icon(seed_id),
-				"label": "Plant %s (%d seeds)" % [ItemDB.items[crop_id]["name"], owned],
+				"icon": ItemDB.icon(crop_id),
+				"label": "Plant %s (%d in stock)" % [ItemDB.items[crop_id]["name"], owned],
 				"count": owned,
 				"disabled": owned <= 0,
 				"callback": start_planting.bind(crop_id),
@@ -196,11 +195,10 @@ func _apply_drag(pos: Vector2) -> void:
 		return
 	var plot: FarmPlot = obj
 	if mode == Mode.PLANT and plot.state == FarmPlot.State.EMPTY:
-		var seed_id: String = ItemDB.crops[plant_crop]["seed"]
-		if Game.remove_item(seed_id, 1):
+		if Game.remove_item(plant_crop, 1):
 			plot.plant(plant_crop)
 			main.play_sfx("tap-a")
-			if Game.count(seed_id) <= 0:
+			if Game.count(plant_crop) <= 0:
 				cancel_mode()
 			else:
 				_update_banner()
@@ -217,8 +215,7 @@ func _harvest_plot(plot: FarmPlot) -> void:
 
 func _update_banner() -> void:
 	if mode == Mode.PLANT:
-		var seed_id: String = ItemDB.crops[plant_crop]["seed"]
-		main.hud.set_mode_banner("Planting %s — click & drag on empty plots (%d seeds left)" % [ItemDB.items[plant_crop]["name"], Game.count(seed_id)], true)
+		main.hud.set_mode_banner("Planting %s — click & drag on empty plots (%d left)" % [ItemDB.items[plant_crop]["name"], Game.count(plant_crop)], true)
 
 # ---------- placement mode ----------
 

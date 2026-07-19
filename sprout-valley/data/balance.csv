@@ -1,9 +1,9 @@
 ﻿id,value,notes
 start_money,15000,GDD 13.5
-harvest_yield,2,crops harvested per seed planted
-wheat_seed_cost,5,
-beets_seed_cost,8,
-cabbage_seed_cost,10,
+harvest_yield,2,crops harvested per crop planted (replant some, sell the rest)
+wheat_cost,5,cost to buy a wheat to start planting
+beets_cost,8,cost to buy a beet to start planting
+cabbage_cost,10,cost to buy a cabbage to start planting
 wheat_grow_time,7,seconds (user: 1-3 min per crop)
 beets_grow_time,12,
 cabbage_grow_time,60,

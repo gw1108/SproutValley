@@ -87,7 +87,7 @@ func _refresh() -> void:
 		_add_row(item_id, n)
 	if not any:
 		var empty := Label.new()
-		empty.text = "Nothing stored yet — buy seeds, grow crops and collect goods!"
+		empty.text = "Nothing stored yet — buy a crop, plant it, grow more and collect goods!"
 		empty.add_theme_font_size_override("font_size", 14)
 		empty.add_theme_color_override("font_color", Color(0.45, 0.35, 0.24))
 		empty.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART

@@ -1,12 +1,12 @@
 extends CanvasLayer
 class_name ShopOverlay
-## Tabbed shop: Seeds & Tools / Animal Homes / Animals / Production.
-## Placeables hand off to placement mode; seeds/tools/animals buy instantly.
+## Tabbed shop: Crops & Tools / Animal Homes / Animals / Production.
+## Placeables hand off to placement mode; crops/tools/animals buy instantly.
 
 signal request_place(id: String)
 signal request_animal(kind: String)
 
-const TABS := ["Seeds & Tools", "Animal Homes", "Animals", "Production"]
+const TABS := ["Crops & Tools", "Animal Homes", "Animals", "Production"]
 
 var _root: Control
 var _grid: GridContainer
@@ -115,12 +115,11 @@ func _refresh() -> void:
 	match _current_tab:
 		0:
 			for crop_id in ItemDB.crops:
-				var seed_id: String = ItemDB.crops[crop_id]["seed"]
-				_add_card(ItemDB.items[seed_id]["name"], ItemDB.icon(seed_id),
-					int(BalanceData.get_value(crop_id + "_seed_cost", 5.0)),
-					"Buy", _buy_item.bind(seed_id, crop_id + "_seed_cost"),
-					"Grows in %ds • sells %d" % [int(BalanceData.get_value(crop_id + "_grow_time", 60.0)), ItemDB.sell_price(crop_id)],
-					Game.count(seed_id))
+				_add_card(ItemDB.items[crop_id]["name"], ItemDB.icon(crop_id),
+					int(BalanceData.get_value(crop_id + "_cost", 5.0)),
+					"Buy", _buy_item.bind(crop_id, crop_id + "_cost"),
+					"Grows in %ds • yields %d • sells %d" % [int(BalanceData.get_value(crop_id + "_grow_time", 60.0)), int(BalanceData.get_value("harvest_yield", 2.0)), ItemDB.sell_price(crop_id)],
+					Game.count(crop_id))
 			_add_card("Axe", ItemDB.icon("axe"), int(BalanceData.get_value("axe_cost", 40.0)),
 				"Buy", _buy_item.bind("axe", "axe_cost"), "Removes small trees (single use)", Game.count("axe"))
 			_add_card("Saw", ItemDB.icon("saw"), int(BalanceData.get_value("saw_cost", 90.0)),

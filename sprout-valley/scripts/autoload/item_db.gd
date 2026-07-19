@@ -18,15 +18,14 @@ var items := {
 	"bread": {"name": "Bread", "icon": "icon_bread", "sell": "bread_sell", "xp": "bread_xp"},
 	"chicken_feed": {"name": "Chicken Feed", "icon": "icon_chicken_feed", "sell": "", "xp": ""},
 	"cow_feed": {"name": "Cow Feed", "icon": "icon_cow_feed", "sell": "", "xp": ""},
-	"wheat_seed": {"name": "Wheat Seed", "icon": "icon_wheat_seed", "sell": "", "xp": ""},
-	"beets_seed": {"name": "Beet Seed", "icon": "icon_beets_seed", "sell": "", "xp": ""},
-	"cabbage_seed": {"name": "Cabbage Seed", "icon": "icon_cabbage_seed", "sell": "", "xp": ""},
 	"axe": {"name": "Axe", "icon": "icon_axe", "sell": "", "xp": ""},
 	"saw": {"name": "Saw", "icon": "icon_saw", "sell": "", "xp": ""},
 }
 
-# crop id -> seed item, grow time key. All crops share the same planted look
-# (2 variations, picked randomly on planting) and have a per-crop mature texture.
+# crop id -> grow time key. You plant the crop item itself (no seeds); a mature
+# plot yields `harvest_yield` of that same crop, which you replant. All crops
+# share the same planted look (2 variations, picked randomly on planting) and
+# have a per-crop mature texture.
 const PLANTED_VARIANTS := 2
 
 # Choppable world trees come in two sizes, each with N randomly-picked art
@@ -35,9 +34,9 @@ const TREE_SMALL_VARIANTS := 3
 const TREE_LARGE_VARIANTS := 3
 
 var crops := {
-	"wheat": {"seed": "wheat_seed", "grow": "wheat_grow_time"},
-	"beets": {"seed": "beets_seed", "grow": "beets_grow_time"},
-	"cabbage": {"seed": "cabbage_seed", "grow": "cabbage_grow_time"},
+	"wheat": {"grow": "wheat_grow_time"},
+	"beets": {"grow": "beets_grow_time"},
+	"cabbage": {"grow": "cabbage_grow_time"},
 }
 
 # recipe id -> building, inputs, output, craft-time key
