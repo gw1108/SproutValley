@@ -42,8 +42,8 @@ butter_craft_time,60,
 bread_craft_time,45,
 xp_level_base,4,xpToNext = round(base*(1+ln(L)))
 tree_small_count,7,initial trees on the farm
-grid_cell,48,placement grid cell px
-disp_farm_plot,96,on-screen plot diamond width px (isometric; height follows art aspect)
+grid_half_w,48,half-width px of a grid diamond cell (full diamond 96 px wide)
+grid_half_h,24,half-height px of a grid diamond cell (24/48 = 26.6 deg isometric edge angle)
 disp_tree_small,72,
 disp_tree_large,120,on-screen width px of a big (saw-only) tree
 tree_jitter,8,max random x/y px offset applied to placed trees so rows/columns don't align
@@ -55,7 +55,8 @@ disp_bakery,105,
 disp_delivery_box,78,
 disp_chicken,38,
 disp_cow,60,
-disp_crop,42,crop sprite width on a plot
+disp_crop,84,crop sprite width on a plot (tile is 96 px wide; ~fills the plot)
+disp_crop_base_y,18,crop sprite bottom offset below cell centre (tile bottom vertex is 24)
 animal_wander_speed,22,px per second
 radial_button_size,52,radial menu button diameter px
 radial_radius,56,radial menu ring radius px

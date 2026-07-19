@@ -44,16 +44,28 @@ func _apply_blockers() -> void:
 		_dump_blocked()
 
 func _dump_blocked() -> void:
-	# dev tooling: ASCII map of blocker-occupied cells ('#'), for probes
-	for cy in grid.rows:
+	# dev tooling: ASCII map of lattice cells ('#' blocked, '.' free, ' ' out of
+	# bounds), rows/cols are lattice cy/cx (diagonals on screen), for probes
+	var inb := {}
+	var lo := Vector2i(1 << 20, 1 << 20)
+	var hi := -lo
+	for c in grid.all_cells():
+		inb[c] = true
+		lo = Vector2i(mini(lo.x, c.x), mini(lo.y, c.y))
+		hi = Vector2i(maxi(hi.x, c.x), maxi(hi.y, c.y))
+	for cy in range(lo.y, hi.y + 1):
 		var row := ""
-		for cx in grid.cols:
-			row += "#" if grid.occupant(Vector2i(cx, cy)) != null else "."
-		print("BLOCKED %s" % row)
+		for cx in range(lo.x, hi.x + 1):
+			var c := Vector2i(cx, cy)
+			row += (("#" if grid.occupant(c) != null else ".") if inb.has(c) else " ")
+		print("BLOCKED cy=%d %s" % [cy, row])
 
 func _build_layers() -> void:
 	plot_layer = Node2D.new()
 	plot_layer.z_index = -5
+	# sort plots/crops by their cell's south point so the furthest-south plot
+	# draws last (over its northern neighbours), matching the world layer's rule
+	plot_layer.y_sort_enabled = true
 	add_child(plot_layer)
 	world = Node2D.new()
 	world.y_sort_enabled = true
@@ -115,7 +127,7 @@ func spawn_structure(id: String, cell: Vector2i) -> Structure:
 func spawn_plot(cell: Vector2i) -> FarmPlot:
 	var p := FarmPlot.new()
 	p.cell = cell
-	p.position = grid.plot_cell_to_world(cell)
+	p.position = grid.cell_to_world(cell)
 	grid.occupy(cell, Vector2i.ONE, p)
 	plot_layer.add_child(p)
 	p.add_to_group("interactable")

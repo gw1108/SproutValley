@@ -51,12 +51,12 @@ var recipes := {
 # placeable/pre-placed structures. footprint in grid cells, disp = balance key
 # for on-screen sprite width.
 var buildings := {
-	"player_home": {"name": "Home", "tex": "player_home", "footprint": Vector2i(3, 2), "disp": "disp_player_home"},
-	"barn": {"name": "Barn", "tex": "barn", "footprint": Vector2i(3, 2), "disp": "disp_barn", "cost": "barn_cost", "max": 1},
-	"delivery_box": {"name": "Delivery Box", "tex": "delivery_box", "footprint": Vector2i(2, 1), "disp": "disp_delivery_box", "dir": WORLD_DIR},
-	"chicken_coop": {"name": "Chicken Coop", "tex": "chicken_coop", "footprint": Vector2i(2, 2), "disp": "disp_chicken_coop", "cost": "chicken_coop_cost", "max": 1},
-	"dairy_barn": {"name": "Dairy Barn", "tex": "dairy_barn", "footprint": Vector2i(3, 2), "disp": "disp_dairy_barn", "cost": "dairy_barn_cost", "max": 1},
-	"bakery": {"name": "Bakery", "tex": "bakery", "footprint": Vector2i(2, 2), "disp": "disp_bakery", "cost": "bakery_cost", "max": 1},
+	"player_home": {"name": "Home", "tex": "player_home", "footprint": Vector2i(2, 1), "disp": "disp_player_home"},
+	"barn": {"name": "Barn", "tex": "barn", "footprint": Vector2i(2, 1), "disp": "disp_barn", "cost": "barn_cost", "max": 1},
+	"delivery_box": {"name": "Delivery Box", "tex": "delivery_box", "footprint": Vector2i(1, 1), "disp": "disp_delivery_box", "dir": WORLD_DIR},
+	"chicken_coop": {"name": "Chicken Coop", "tex": "chicken_coop", "footprint": Vector2i(1, 1), "disp": "disp_chicken_coop", "cost": "chicken_coop_cost", "max": 1},
+	"dairy_barn": {"name": "Dairy Barn", "tex": "dairy_barn", "footprint": Vector2i(2, 1), "disp": "disp_dairy_barn", "cost": "dairy_barn_cost", "max": 1},
+	"bakery": {"name": "Bakery", "tex": "bakery", "footprint": Vector2i(1, 1), "disp": "disp_bakery", "cost": "bakery_cost", "max": 1},
 }
 
 var _tex_cache: Dictionary = {}

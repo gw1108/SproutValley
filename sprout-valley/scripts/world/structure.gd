@@ -94,10 +94,10 @@ func start_craft(recipe_id: String) -> bool:
 func home_rect() -> Rect2:
 	## Area animals wander in: a strip in front of their home building
 	## (barn for cows, coop for chickens).
-	var cs := BalanceData.get_value("grid_cell", 48.0)
-	var top_left := global_position - Vector2(footprint.x * 0.5, float(footprint.y)) * cs
-	var size := Vector2(footprint) * cs
-	return Rect2(top_left.x - 16.0, global_position.y - 14.0, size.x + 32.0, 52.0)
+	# width of the footprint's diamond region on the isometric lattice
+	var hw := BalanceData.get_value("grid_half_w", 48.0)
+	var w := (footprint.x + footprint.y) * hw
+	return Rect2(global_position.x - w * 0.5 - 16.0, global_position.y - 14.0, w + 32.0, 52.0)
 
 func click_rect() -> Rect2:
 	var size := _sprite.texture.get_size() * _sprite.scale

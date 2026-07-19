@@ -35,16 +35,15 @@ func _process(_delta: float) -> void:
 		var pos := main.get_global_mouse_position()
 		var cell := _cell_for_place_pos(pos)
 		var fp := _place_footprint()
-		_ghost.global_position = grid.plot_cell_to_world(cell) if place_id == "farm_plot" else grid.footprint_bottom(cell, fp)
+		_ghost.global_position = grid.cell_to_world(cell) if place_id == "farm_plot" else grid.footprint_bottom(cell, fp)
 		var ok := grid.is_free(cell, fp)
 		_ghost.modulate = Color(0.5, 1.0, 0.5, 0.75) if ok else Color(1.0, 0.4, 0.4, 0.6)
 
 func _cell_for_place_pos(pos: Vector2) -> Vector2i:
-	## Cell whose footprint is centered under the cursor.
-	if place_id == "farm_plot":
-		return grid.plot_world_to_cell(pos)
+	## Anchor cell that centers the footprint's diamond region under the cursor.
 	var fp := _place_footprint()
-	return grid.world_to_cell(pos - Vector2(fp.x, fp.y) * grid.cell_size * 0.5 + Vector2(grid.cell_size, grid.cell_size) * 0.5)
+	var f := grid.world_to_cell_f(pos) - Vector2(fp - Vector2i.ONE) * 0.5
+	return Vector2i(roundi(f.x), roundi(f.y))
 
 func _on_press(pos: Vector2) -> void:
 	match mode:
@@ -55,7 +54,7 @@ func _on_press(pos: Vector2) -> void:
 		Mode.PLANT, Mode.HARVEST:
 			# Tapping empty ground (no plot under the cursor) backs out of the mode,
 			# same as pressing Done or ESC. Tapping a plot still plants/harvests.
-			if grid.occupant(grid.plot_world_to_cell(pos)) is FarmPlot:
+			if grid.occupant(grid.world_to_cell(pos)) is FarmPlot:
 				_apply_drag(pos)
 			else:
 				cancel_mode()
@@ -191,7 +190,7 @@ func start_harvesting() -> void:
 	main.hud.set_mode_banner("Harvesting — click & drag across grown crops", true)
 
 func _apply_drag(pos: Vector2) -> void:
-	var cell := grid.plot_world_to_cell(pos)
+	var cell := grid.world_to_cell(pos)
 	var obj = grid.occupant(cell)
 	if obj == null or not (obj is FarmPlot):
 		return
@@ -230,7 +229,10 @@ func start_placing(id: String) -> void:
 	_ghost = Sprite2D.new()
 	if id == "farm_plot":
 		_ghost.texture = ItemDB.tex("res://assets/world/farm_plot.png")
-		_ghost.scale = Vector2.ONE * (BalanceData.get_value("disp_farm_plot", 50.0) / _ghost.texture.get_width())
+		# stretch the soil diamond to exactly fill one grid cell
+		_ghost.scale = Vector2(
+			grid.half.x * 2.0 / _ghost.texture.get_width(),
+			grid.half.y * 2.0 / _ghost.texture.get_height())
 	else:
 		_ghost.texture = ItemDB.building_tex(id)
 		var w := BalanceData.get_value(ItemDB.buildings[id]["disp"], 120.0)

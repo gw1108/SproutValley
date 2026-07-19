@@ -194,11 +194,12 @@ func _on_level_up(new_level: int) -> void:
 	lbl.add_theme_constant_override("outline_size", 8)
 	lbl.anchor_left = 0.5
 	lbl.anchor_right = 0.5
-	lbl.anchor_top = 0.35
-	lbl.anchor_bottom = 0.35
+	lbl.anchor_top = 0.5
+	lbl.anchor_bottom = 0.5
 	add_child(lbl)
 	await get_tree().process_frame
 	lbl.position.x = -lbl.size.x / 2.0
+	lbl.position.y = -lbl.size.y / 2.0
 	var tw := lbl.create_tween()
 	lbl.scale = Vector2(0.3, 0.3)
 	lbl.pivot_offset = lbl.size / 2.0

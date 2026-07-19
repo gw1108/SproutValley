@@ -18,10 +18,13 @@ var _bar_fill: ColorRect
 var _ready_bubble: Sprite2D
 
 func _ready() -> void:
-	var w := BalanceData.get_value("disp_farm_plot", 50.0)
 	_soil = Sprite2D.new()
 	_soil.texture = ItemDB.tex("res://assets/world/farm_plot.png")
-	_soil.scale = Vector2.ONE * (w / _soil.texture.get_width())
+	# stretch the soil diamond to exactly fill one grid cell so adjacent plots
+	# tessellate edge-to-edge on the isometric lattice
+	_soil.scale = Vector2(
+		_grid_half().x * 2.0 / _soil.texture.get_width(),
+		_grid_half().y * 2.0 / _soil.texture.get_height())
 	add_child(_soil)
 
 	_crop = Sprite2D.new()
@@ -87,8 +90,10 @@ func _set_crop_tex(t: Texture2D) -> void:
 	var w := BalanceData.get_value("disp_crop", 42.0)
 	var s := w / t.get_width()
 	_crop.scale = Vector2.ONE * s
-	# sit the crop on the soil, poking upward
-	_crop.position = Vector2(0, 6 - t.get_height() * s * 0.5)
+	# sit the crop's base low on the soil diamond so it fills the plot instead of
+	# floating north; base_y is where the sprite bottom lands below the cell centre
+	var base_y := BalanceData.get_value("disp_crop_base_y", 18.0)
+	_crop.position = Vector2(0, base_y - t.get_height() * s * 0.5)
 
 func _pop(node: Node2D) -> void:
 	var base := node.scale
@@ -96,9 +101,13 @@ func _pop(node: Node2D) -> void:
 	node.scale = base * 0.7
 	tw.tween_property(node, "scale", base, 0.25).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
+static func _grid_half() -> Vector2:
+	return Vector2(
+		BalanceData.get_value("grid_half_w", 48.0),
+		BalanceData.get_value("grid_half_h", 24.0))
+
 func click_rect() -> Rect2:
-	# bounding box of the isometric diamond; overlapping neighbours are resolved
+	# bounding box of the cell's diamond; overlapping neighbours are resolved
 	# by the front-most (largest y) tie-break in InteractionManager._object_at
-	var w := BalanceData.get_value("disp_farm_plot", 96.0)
-	var h := w * (float(_soil.texture.get_height()) / float(_soil.texture.get_width()))
-	return Rect2(global_position - Vector2(w, h) * 0.5, Vector2(w, h))
+	var half := _grid_half()
+	return Rect2(global_position - half, half * 2.0)

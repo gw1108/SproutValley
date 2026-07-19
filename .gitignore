@@ -49,6 +49,9 @@ ExportedObj/
 
 # Builds
 build/
+
+# itch.io butler CLI (auto-downloaded by tools/deploy-itch.ps1)
+tools/butler/
 *.apk
 *.aab
 *.app
