@@ -115,7 +115,7 @@ func spawn_structure(id: String, cell: Vector2i) -> Structure:
 func spawn_plot(cell: Vector2i) -> FarmPlot:
 	var p := FarmPlot.new()
 	p.cell = cell
-	p.position = grid.cell_to_world(cell)
+	p.position = grid.plot_cell_to_world(cell)
 	grid.occupy(cell, Vector2i.ONE, p)
 	plot_layer.add_child(p)
 	p.add_to_group("interactable")
@@ -135,12 +135,16 @@ func _spawn_starting_trees() -> void:
 	for m in tree_spawns.get_children():
 		var cell: Vector2i = m.grid_cell(grid)
 		if grid.is_free(cell, Vector2i.ONE):
-			_spawn_tree(cell)
+			_spawn_tree(cell, m.big)
 
-func _spawn_tree(cell: Vector2i) -> void:
+func _spawn_tree(cell: Vector2i, big := false) -> void:
 	var t := FarmTree.new()
-	t.setup(cell, grid)
-	t.position = grid.footprint_bottom(cell, t.footprint)
+	t.setup(cell, grid, big)
+	# nudge each tree by a small random offset so trees placed in rows/columns
+	# don't look perfectly aligned (grid occupancy still uses the exact cell)
+	var jitter := BalanceData.get_value("tree_jitter", 8.0)
+	var offset := Vector2(randf_range(-jitter, jitter), randf_range(-jitter, jitter))
+	t.position = grid.footprint_bottom(cell, t.footprint) + offset
 	grid.occupy(cell, t.footprint, t)
 	world.add_child(t)
 	t.add_to_group("interactable")
@@ -172,7 +176,51 @@ func on_tree_chopped() -> void:
 	cam_shake.tween_property(self, "position", Vector2.ZERO, 0.06)
 
 func notify_deposit(item_id: String, n: int, from_pos: Vector2) -> void:
-	floating_icon(ItemDB.icon(item_id), from_pos, "+%d" % n)
+	var home: Structure = structures.get("player_home")
+	if home == null:
+		floating_icon(ItemDB.icon(item_id), from_pos, "+%d" % n)
+		return
+	fly_to_home(ItemDB.icon(item_id), from_pos, home.global_position, "+%d" % n)
+
+func fly_to_home(icon: Texture2D, from_pos: Vector2, home_pos: Vector2, text: String = "") -> void:
+	## Spawn the produce icon, pop it up, then sail it over to the player's home
+	## before fading out.
+	var node := Node2D.new()
+	node.position = from_pos
+	node.z_index = 6
+	overlay_layer.add_child(node)
+	var spr := Sprite2D.new()
+	spr.texture = icon
+	if icon != null:
+		spr.scale = Vector2.ONE * (BalanceData.get_value("deposit_icon_size", 28.0) / icon.get_width())
+	node.add_child(spr)
+	var lbl: Label = null
+	if text != "":
+		lbl = Label.new()
+		lbl.text = text
+		lbl.add_theme_font_size_override("font_size", 15)
+		lbl.add_theme_color_override("font_color", Color(1, 1, 1))
+		lbl.add_theme_color_override("font_outline_color", Color(0.25, 0.16, 0.08))
+		lbl.add_theme_constant_override("outline_size", 5)
+		lbl.position = Vector2(12, -12)
+		node.add_child(lbl)
+
+	var rise := BalanceData.get_value("deposit_rise", 40.0)
+	var rise_time := BalanceData.get_value("deposit_rise_time", 0.35)
+	var fly_time := BalanceData.get_value("deposit_fly_time", 0.7)
+	var top := from_pos + Vector2(0, -rise)
+
+	var tw := node.create_tween()
+	# 1) pop up out of the plot
+	tw.tween_property(node, "position", top, rise_time).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	if lbl != null:
+		# the "+n" label has done its job; drop it before the icon flies off
+		tw.tween_callback(lbl.queue_free)
+	# 2) sail over to the home, shrinking as it "lands" in storage
+	tw.tween_property(node, "position", home_pos, fly_time).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
+	tw.parallel().tween_property(spr, "scale", spr.scale * 0.35, fly_time).set_ease(Tween.EASE_IN)
+	tw.parallel().tween_property(node, "modulate:a", 0.0, fly_time).set_delay(fly_time * 0.45)
+	tw.tween_callback(node.queue_free)
 
 func floating_icon(icon: Texture2D, pos: Vector2, text: String = "") -> void:
 	var node := Node2D.new()

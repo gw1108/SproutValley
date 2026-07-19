@@ -10,8 +10,40 @@ var cell_size := 48.0
 
 var _occupied: Dictionary = {}   # Vector2i -> Object (owner of the cell)
 
+# --- isometric plot projection ---
+# Farm plots render as 2:1 diamonds that tessellate edge-to-edge on their own
+# isometric lattice, laid over the square logical grid used for occupancy.
+# Buildings and trees keep the square projection (cell_to_world/world_to_cell).
+var plot_iso_origin: Vector2
+var plot_iso_half := Vector2(48.0, 25.0)   # half diamond (width, height) px
+
 func _init() -> void:
 	cell_size = BalanceData.get_value("grid_cell", 48.0)
+
+func _ready() -> void:
+	_setup_plot_iso()
+
+func _setup_plot_iso() -> void:
+	var w := BalanceData.get_value("disp_farm_plot", 96.0)
+	var tex := ItemDB.tex("res://assets/world/farm_plot.png")
+	var aspect := (float(tex.get_height()) / float(tex.get_width())) if tex != null else 0.527
+	plot_iso_half = Vector2(w * 0.5, w * aspect * 0.5)
+	# anchor the iso field so the middle of the square play area maps to its centre
+	var mid := Vector2i(cols / 2, rows / 2)
+	plot_iso_origin = cell_to_world(mid) - Vector2(
+		(mid.x - mid.y) * plot_iso_half.x, (mid.x + mid.y) * plot_iso_half.y)
+
+func plot_cell_to_world(cell: Vector2i) -> Vector2:
+	## Centre of a plot's diamond on the isometric lattice.
+	return plot_iso_origin + Vector2(
+		(cell.x - cell.y) * plot_iso_half.x, (cell.x + cell.y) * plot_iso_half.y)
+
+func plot_world_to_cell(pos: Vector2) -> Vector2i:
+	## Nearest plot cell under a screen position (inverse of plot_cell_to_world).
+	var d := pos - plot_iso_origin
+	var u := d.x / plot_iso_half.x   # cx - cy
+	var v := d.y / plot_iso_half.y   # cx + cy
+	return Vector2i(roundi((u + v) * 0.5), roundi((v - u) * 0.5))
 
 func cell_to_world(cell: Vector2i) -> Vector2:
 	## Center of a cell.

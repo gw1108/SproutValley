@@ -9,7 +9,6 @@ class_name StructureSpawn
 const PREVIEW_FOOTPRINTS := {
 	"player_home": Vector2i(3, 2), "barn": Vector2i(3, 2),
 	"delivery_box": Vector2i(2, 1), "chicken_coop": Vector2i(2, 2),
-	"feed_mill": Vector2i(2, 2),
 	"dairy_barn": Vector2i(3, 2), "bakery": Vector2i(2, 2),
 }
 

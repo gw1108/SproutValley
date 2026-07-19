@@ -122,20 +122,21 @@ func _refresh() -> void:
 					"Grows in %ds • sells %d" % [int(BalanceData.get_value(crop_id + "_grow_time", 60.0)), ItemDB.sell_price(crop_id)],
 					Game.count(seed_id))
 			_add_card("Axe", ItemDB.icon("axe"), int(BalanceData.get_value("axe_cost", 40.0)),
-				"Buy", _buy_item.bind("axe", "axe_cost"), "Chops trees (single use)", Game.count("axe"))
+				"Buy", _buy_item.bind("axe", "axe_cost"), "Removes small trees (single use)", Game.count("axe"))
+			_add_card("Saw", ItemDB.icon("saw"), int(BalanceData.get_value("saw_cost", 90.0)),
+				"Buy", _buy_item.bind("saw", "saw_cost"), "Removes big trees (single use)", Game.count("saw"))
 			_add_card("Farm Plot", ItemDB.tex("res://assets/world/farm_plot.png"),
 				int(BalanceData.get_value("farm_plot_cost", 25.0)),
 				"Place", _place.bind("farm_plot"),
 				"%d/%d placed" % [Game.placed("farm_plot"), int(BalanceData.get_value("farm_plot_max", 25.0))],
 				-1, Game.placed("farm_plot") >= int(BalanceData.get_value("farm_plot_max", 25.0)))
 		1:
-			_add_building_card("chicken_coop", "Home for chickens")
-			_add_building_card("barn", "Home for cows")
+			_add_building_card("chicken_coop", "Home for chickens • crafts Chicken Feed")
+			_add_building_card("barn", "Home for cows • crafts Cow Feed")
 		2:
 			_add_animal_card("chicken", "chicken_coop", "Eats Chicken Feed, lays Eggs")
 			_add_animal_card("cow", "barn", "Eats Cow Feed, gives Milk")
 		3:
-			_add_building_card("feed_mill", "Crafts Chicken & Cow Feed")
 			_add_building_card("dairy_barn", "3 Milk → Butter")
 			_add_building_card("bakery", "2 Wheat → Bread")
 

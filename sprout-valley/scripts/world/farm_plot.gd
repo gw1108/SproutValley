@@ -97,5 +97,8 @@ func _pop(node: Node2D) -> void:
 	tw.tween_property(node, "scale", base, 0.25).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
 func click_rect() -> Rect2:
-	var half := BalanceData.get_value("disp_farm_plot", 50.0) * 0.5
-	return Rect2(global_position - Vector2(half, half * 0.7), Vector2(half * 2.0, half * 1.6))
+	# bounding box of the isometric diamond; overlapping neighbours are resolved
+	# by the front-most (largest y) tie-break in InteractionManager._object_at
+	var w := BalanceData.get_value("disp_farm_plot", 96.0)
+	var h := w * (float(_soil.texture.get_height()) / float(_soil.texture.get_width()))
+	return Rect2(global_position - Vector2(w, h) * 0.5, Vector2(w, h))

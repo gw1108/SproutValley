@@ -15,6 +15,9 @@ A `class_name` added this session isn't in the global class cache until an edito
 ### BootProbe click coordinates
 FarmGrid has origin (48, 120), not (0, 0) — when computing world/cell positions for probe clicks, apply the origin offset or placement clicks silently land on road/out-of-bounds cells.
 
+### BootProbe run mode
+Run BootProbe WITHOUT `--headless` — it needs a render context to save screenshots; with `--headless` it hangs and writes no image.
+
 ### agy target paths
 agy's shell tool runs from its own scratch dir, not the launch cwd — always give agy ABSOLUTE file paths for outputs (relative paths land in `~/.gemini/antigravity-cli/scratch/`).
 

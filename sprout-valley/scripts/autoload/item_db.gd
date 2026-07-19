@@ -22,11 +22,17 @@ var items := {
 	"beets_seed": {"name": "Beet Seed", "icon": "icon_beets_seed", "sell": "", "xp": ""},
 	"cabbage_seed": {"name": "Cabbage Seed", "icon": "icon_cabbage_seed", "sell": "", "xp": ""},
 	"axe": {"name": "Axe", "icon": "icon_axe", "sell": "", "xp": ""},
+	"saw": {"name": "Saw", "icon": "icon_saw", "sell": "", "xp": ""},
 }
 
 # crop id -> seed item, grow time key. All crops share the same planted look
 # (2 variations, picked randomly on planting) and have a per-crop mature texture.
 const PLANTED_VARIANTS := 2
+
+# Choppable world trees come in two sizes, each with N randomly-picked art
+# variants (tree_small_1.png … / tree_large_1.png …).
+const TREE_SMALL_VARIANTS := 3
+const TREE_LARGE_VARIANTS := 3
 
 var crops := {
 	"wheat": {"seed": "wheat_seed", "grow": "wheat_grow_time"},
@@ -36,8 +42,8 @@ var crops := {
 
 # recipe id -> building, inputs, output, craft-time key
 var recipes := {
-	"chicken_feed": {"building": "feed_mill", "inputs": {"wheat": 2}, "out": "chicken_feed", "qty": 1, "time": "chicken_feed_craft_time"},
-	"cow_feed": {"building": "feed_mill", "inputs": {"beets": 2, "cabbage": 1}, "out": "cow_feed", "qty": 1, "time": "cow_feed_craft_time"},
+	"chicken_feed": {"building": "chicken_coop", "inputs": {"wheat": 2}, "out": "chicken_feed", "qty": 1, "time": "chicken_feed_craft_time"},
+	"cow_feed": {"building": "barn", "inputs": {"beets": 2, "cabbage": 1}, "out": "cow_feed", "qty": 1, "time": "cow_feed_craft_time"},
 	"butter": {"building": "dairy_barn", "inputs": {"milk": 3}, "out": "butter", "qty": 1, "time": "butter_craft_time"},
 	"bread": {"building": "bakery", "inputs": {"wheat": 2}, "out": "bread", "qty": 1, "time": "bread_craft_time"},
 }
@@ -49,7 +55,6 @@ var buildings := {
 	"barn": {"name": "Barn", "tex": "barn", "footprint": Vector2i(3, 2), "disp": "disp_barn", "cost": "barn_cost", "max": 1},
 	"delivery_box": {"name": "Delivery Box", "tex": "delivery_box", "footprint": Vector2i(2, 1), "disp": "disp_delivery_box", "dir": WORLD_DIR},
 	"chicken_coop": {"name": "Chicken Coop", "tex": "chicken_coop", "footprint": Vector2i(2, 2), "disp": "disp_chicken_coop", "cost": "chicken_coop_cost", "max": 1},
-	"feed_mill": {"name": "Feed Mill", "tex": "feed_mill", "footprint": Vector2i(2, 2), "disp": "disp_feed_mill", "cost": "feed_mill_cost", "max": 1},
 	"dairy_barn": {"name": "Dairy Barn", "tex": "dairy_barn", "footprint": Vector2i(3, 2), "disp": "disp_dairy_barn", "cost": "dairy_barn_cost", "max": 1},
 	"bakery": {"name": "Bakery", "tex": "bakery", "footprint": Vector2i(2, 2), "disp": "disp_bakery", "cost": "bakery_cost", "max": 1},
 }
@@ -71,6 +76,11 @@ func planted_tex(variant: int) -> Texture2D:
 
 func mature_tex(crop_id: String) -> Texture2D:
 	return tex(CROPS_DIR + "%s_mature.png" % crop_id)
+
+func tree_tex(big: bool, variant: int) -> Texture2D:
+	var size := "large" if big else "small"
+	var n := TREE_LARGE_VARIANTS if big else TREE_SMALL_VARIANTS
+	return tex(WORLD_DIR + "tree_%s_%d.png" % [size, clampi(variant, 1, n)])
 
 func building_tex(building_id: String) -> Texture2D:
 	var b: Dictionary = buildings[building_id]

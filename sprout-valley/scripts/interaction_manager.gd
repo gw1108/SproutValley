@@ -35,12 +35,14 @@ func _process(_delta: float) -> void:
 		var pos := main.get_global_mouse_position()
 		var cell := _cell_for_place_pos(pos)
 		var fp := _place_footprint()
-		_ghost.global_position = grid.footprint_bottom(cell, fp) if place_id != "farm_plot" else grid.footprint_center(cell, fp)
+		_ghost.global_position = grid.plot_cell_to_world(cell) if place_id == "farm_plot" else grid.footprint_bottom(cell, fp)
 		var ok := grid.is_free(cell, fp)
 		_ghost.modulate = Color(0.5, 1.0, 0.5, 0.75) if ok else Color(1.0, 0.4, 0.4, 0.6)
 
 func _cell_for_place_pos(pos: Vector2) -> Vector2i:
 	## Cell whose footprint is centered under the cursor.
+	if place_id == "farm_plot":
+		return grid.plot_world_to_cell(pos)
 	var fp := _place_footprint()
 	return grid.world_to_cell(pos - Vector2(fp.x, fp.y) * grid.cell_size * 0.5 + Vector2(grid.cell_size, grid.cell_size) * 0.5)
 
@@ -51,7 +53,12 @@ func _on_press(pos: Vector2) -> void:
 			if obj != null:
 				_open_menu_for(obj, pos)
 		Mode.PLANT, Mode.HARVEST:
-			_apply_drag(pos)
+			# Tapping empty ground (no plot under the cursor) backs out of the mode,
+			# same as pressing Done or ESC. Tapping a plot still plants/harvests.
+			if grid.occupant(grid.plot_world_to_cell(pos)) is FarmPlot:
+				_apply_drag(pos)
+			else:
+				cancel_mode()
 		Mode.PLACE:
 			_try_place(pos)
 
@@ -108,9 +115,10 @@ func _plot_options(plot: FarmPlot) -> Array:
 		})
 	return options
 
-func _on_scythe_pressed(plot: FarmPlot) -> void:
+func _on_scythe_pressed(_plot: FarmPlot) -> void:
+	# Selecting the scythe only arms harvest mode; the player then clicks &
+	# drags across mature plots (including the one they clicked) to harvest.
 	start_harvesting()
-	_harvest_plot(plot)
 
 func _tree_options(tree: FarmTree) -> Array:
 	var tool_id := tree.tool_needed()
@@ -183,7 +191,7 @@ func start_harvesting() -> void:
 	main.hud.set_mode_banner("Harvesting — click & drag across grown crops", true)
 
 func _apply_drag(pos: Vector2) -> void:
-	var cell := grid.world_to_cell(pos)
+	var cell := grid.plot_world_to_cell(pos)
 	var obj = grid.occupant(cell)
 	if obj == null or not (obj is FarmPlot):
 		return

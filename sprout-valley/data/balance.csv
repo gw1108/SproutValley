@@ -1,14 +1,14 @@
 ﻿id,value,notes
-start_money,150,GDD 13.5
+start_money,15000,GDD 13.5
 harvest_yield,2,crops harvested per seed planted
 wheat_seed_cost,5,
 beets_seed_cost,8,
 cabbage_seed_cost,10,
-wheat_grow_time,60,seconds (user: 1-3 min per crop)
-beets_grow_time,90,
-cabbage_grow_time,120,
-wheat_sell,12,
-beets_sell,18,
+wheat_grow_time,7,seconds (user: 1-3 min per crop)
+beets_grow_time,12,
+cabbage_grow_time,60,
+wheat_sell,9,
+beets_sell,16,
 cabbage_sell,24,
 wheat_xp,0.75,
 beets_xp,1,
@@ -23,10 +23,10 @@ bread_sell,50,
 bread_xp,3.5,
 farm_plot_cost,25,
 farm_plot_max,25,
-axe_cost,40,consumed on use (user direction)
+axe_cost,40,consumed on use — removes small trees (user direction)
+saw_cost,90,consumed on use — removes big trees; costlier than the axe (user direction)
 chicken_coop_cost,150,
 barn_cost,250,home for cows (replaced cow pasture)
-feed_mill_cost,200,
 dairy_barn_cost,300,
 bakery_cost,300,
 chicken_cost,30,
@@ -43,15 +43,15 @@ bread_craft_time,45,
 xp_level_base,4,xpToNext = round(base*(1+ln(L)))
 tree_small_count,7,initial trees on the farm
 grid_cell,48,placement grid cell px
-disp_farm_plot,50,on-screen sprite width px
+disp_farm_plot,96,on-screen plot diamond width px (isometric; height follows art aspect)
 disp_tree_small,72,
-disp_tree_stump,44,
+disp_tree_large,120,on-screen width px of a big (saw-only) tree
+tree_jitter,8,max random x/y px offset applied to placed trees so rows/columns don't align
 disp_player_home,150,
 disp_barn,150,
 disp_chicken_coop,105,
 disp_dairy_barn,140,
 disp_bakery,105,
-disp_feed_mill,115,
 disp_delivery_box,78,
 disp_chicken,38,
 disp_cow,60,
@@ -60,3 +60,7 @@ animal_wander_speed,22,px per second
 radial_button_size,52,radial menu button diameter px
 radial_radius,56,radial menu ring radius px
 blocker_min_coverage,0.02,min fraction of a cell a road blocker must cover to block it
+deposit_icon_size,28,on-screen width px of the harvest/collect icon that flies to the home
+deposit_rise,40,px the deposit icon pops upward before flying to the home
+deposit_rise_time,0.35,seconds for the deposit icon to pop up
+deposit_fly_time,0.7,seconds for the deposit icon to sail from the plot to the home

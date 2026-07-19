@@ -18,14 +18,16 @@ centered = false
 [node name="Blockers" type="Node2D" parent="." unique_id=1949734838]
 
 [node name="RoadRow0" type="Node2D" parent="Blockers" unique_id=756934302]
-position = Vector2(336, 72)
+position = Vector2(308.00003, 82.00001)
 rotation = 0.46425757
+scale = Vector2(0.985, 0.075)
 script = ExtResource("3_blocker")
 cells = Vector2i(16, 1)
 
 [node name="RoadRow1" type="Node2D" parent="Blockers" unique_id=736314316]
-position = Vector2(96, 264)
-rotation = -0.6981317
+position = Vector2(118, 281)
+rotation = -0.78095233
+scale = Vector2(1, 0.245)
 script = ExtResource("3_blocker")
 cells = Vector2i(4, 1)
 
@@ -67,6 +69,7 @@ building_id = "delivery_box"
 [node name="Tree1" type="Node2D" parent="TreeSpawns" unique_id=957152612]
 position = Vector2(576, 120)
 script = ExtResource("5_tree")
+big = true
 
 [node name="Tree2" type="Node2D" parent="TreeSpawns" unique_id=451121756]
 position = Vector2(336, 216)
@@ -92,9 +95,10 @@ script = ExtResource("5_tree")
 position = Vector2(528, 456)
 script = ExtResource("5_tree")
 
-[node name="Tree8" type="Node2D" parent="TreeSpawns" unique_id=1093304093]
+[node name="BigTree8" type="Node2D" parent="TreeSpawns" unique_id=1093304093]
 position = Vector2(0, 264)
 script = ExtResource("5_tree")
+big = true
 
 [node name="Tree9" type="Node2D" parent="TreeSpawns" unique_id=211568783]
 position = Vector2(48, 312)
@@ -111,6 +115,7 @@ script = ExtResource("5_tree")
 [node name="Tree12" type="Node2D" parent="TreeSpawns" unique_id=1986046506]
 position = Vector2(0, 408)
 script = ExtResource("5_tree")
+big = true
 
 [node name="Tree13" type="Node2D" parent="TreeSpawns" unique_id=309134263]
 position = Vector2(672, 456)
@@ -123,6 +128,7 @@ script = ExtResource("5_tree")
 [node name="Tree15" type="Node2D" parent="TreeSpawns" unique_id=1192520012]
 position = Vector2(336, 456)
 script = ExtResource("5_tree")
+big = true
 
 [node name="Tree16" type="Node2D" parent="TreeSpawns" unique_id=1407360347]
 position = Vector2(384, 504)
@@ -139,6 +145,7 @@ script = ExtResource("5_tree")
 [node name="Tree19" type="Node2D" parent="TreeSpawns" unique_id=1566205017]
 position = Vector2(912, 264)
 script = ExtResource("5_tree")
+big = true
 
 [node name="Tree20" type="Node2D" parent="TreeSpawns" unique_id=1763891315]
 position = Vector2(576, 72)
