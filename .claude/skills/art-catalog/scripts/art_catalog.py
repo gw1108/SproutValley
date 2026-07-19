@@ -4,11 +4,13 @@
 Portable: stdlib + Pillow only. State lives under <root>/_catalog/:
   catalog.jsonl          one JSON line per current asset (grep this)
   pending_updates.jsonl  event log of changed/deleted source files (agents must surface unresolved ones)
-  sheets/sheet_NNNN.png  immutable labeled contact sheets, ~48 thumbnails each
+  sheets/sheet_NNNN.png  labeled contact sheets, ~48 thumbnails each (stale ones are gc'd)
   <root>/ART_CATALOG.md  generated table of contents + usage instructions
 
 Subcommands:
   scan                   incremental index: new/changed/deleted files, build sheets, regen TOC
+                         (sheets that lost cells are repacked; unreferenced sheet files are deleted)
+  repack                 rebuild ALL contact sheets from the current catalog (descriptions kept)
   todo                   JSON of not-yet-described entries, grouped by sheet (feed to vision agents)
   annotate FILE...       merge {path: {description, tags}} JSON files into the catalog, regen TOC
   resolve PATH --note N  mark a pending update as handled
@@ -179,6 +181,20 @@ def next_sheet_num(root):
     return max(nums, default=0) + 1
 
 
+def gc_sheets(root, entries):
+    """Delete sheet files no catalog entry references. Returns count deleted."""
+    sheets_dir = catalog_dir(root) / "sheets"
+    if not sheets_dir.exists():
+        return 0
+    referenced = {e["sheet"] for e in entries.values() if e.get("sheet")}
+    n = 0
+    for f in sheets_dir.glob("sheet_*.png"):
+        if f.name not in referenced:
+            f.unlink()
+            n += 1
+    return n
+
+
 def write_toc(root, repo):
     entries = load_catalog(root)
     unresolved = [e for e in load_events(root) if not e.get("resolved")]
@@ -233,7 +249,7 @@ def cmd_scan(root, repo):
     preexisting = Path(root).exists()
     catalog_dir(root).mkdir(parents=True, exist_ok=True)
     entries = load_catalog(root)
-    seen, new, changed = set(), [], []
+    seen, new, changed, dirty_sheets = set(), [], [], set()
     # Fast path (mtime_ns + size) filters unchanged files; survivors get hashed in parallel below.
     candidates = []  # (path, file, stat)
     for f in walk_assets(root):
@@ -263,6 +279,7 @@ def cmd_scan(root, repo):
                  "used_by": old["used_by"] if old else []}
         if old:
             changed.append(entry)
+            dirty_sheets.add(old.get("sheet"))
             log_event(root, {"kind": "updated", "path": path, "old_sha256": old["sha256"],
                              "sha256": digest, "used_by": old["used_by"],
                              "detected": datetime.date.today().isoformat(), "resolved": False})
@@ -275,10 +292,16 @@ def cmd_scan(root, repo):
     for p in deleted:
         log_event(root, {"kind": "deleted", "path": p, "used_by": entries[p]["used_by"],
                          "detected": datetime.date.today().isoformat(), "resolved": False})
+        dirty_sheets.add(entries[p].get("sheet"))
         del entries[p]
-    placements = new + changed
+    # Sheets that lost a cell (deleted/updated asset) go stale: repack their surviving
+    # entries onto fresh sheets, then gc_sheets removes any sheet file nothing references.
+    dirty_sheets.discard(None)
+    displaced = [e for e in entries.values() if e.get("sheet") in dirty_sheets]
+    placements = new + changed + displaced
     n_sheets = build_sheets(root, repo, placements, next_sheet_num(root)) if placements else 0
     save_catalog(root, entries)
+    sheets_deleted = gc_sheets(root, entries)
     write_toc(root, repo)
     if not seen:
         print("warning: no raster art found under %s%s" % (
@@ -286,7 +309,21 @@ def cmd_scan(root, repo):
             file=sys.stderr)
     print(json.dumps({"new": len(new), "updated": len(changed), "deleted": len(deleted),
                       "total": len(entries), "sheets_created": n_sheets,
+                      "sheets_deleted": sheets_deleted,
                       "needs_description": sum(1 for e in entries.values() if not e["description"])}))
+
+
+def cmd_repack(root, repo):
+    """Rebuild every contact sheet from the current catalog. Descriptions/tags live in
+    catalog.jsonl keyed by path, so nothing is lost — only sheet/cell references change."""
+    entries = load_catalog(root)
+    placements = [entries[p] for p in sorted(entries)]
+    n_sheets = build_sheets(root, repo, placements, next_sheet_num(root)) if placements else 0
+    save_catalog(root, entries)
+    sheets_deleted = gc_sheets(root, entries)
+    write_toc(root, repo)
+    print(json.dumps({"total": len(entries), "sheets_created": n_sheets,
+                      "sheets_deleted": sheets_deleted}))
 
 
 def cmd_todo(root):
@@ -349,6 +386,7 @@ def main():
     ap.add_argument("--repo", default=".", help="repo root; catalog paths are relative to this")
     sub = ap.add_subparsers(dest="cmd", required=True)
     sub.add_parser("scan")
+    sub.add_parser("repack")
     sub.add_parser("todo")
     p = sub.add_parser("annotate")
     p.add_argument("files", nargs="+")
@@ -358,7 +396,8 @@ def main():
     sub.add_parser("status")
     a = ap.parse_args()
     root = Path(a.repo) / a.root if not Path(a.root).is_absolute() else Path(a.root)
-    {"scan": lambda: cmd_scan(root, a.repo), "todo": lambda: cmd_todo(root),
+    {"scan": lambda: cmd_scan(root, a.repo), "repack": lambda: cmd_repack(root, a.repo),
+     "todo": lambda: cmd_todo(root),
      "annotate": lambda: cmd_annotate(root, a.repo, a.files),
      "resolve": lambda: cmd_resolve(root, a.repo, a.path, a.note),
      "status": lambda: cmd_status(root)}[a.cmd]()

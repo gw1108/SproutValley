@@ -23,11 +23,10 @@ No player character — the game is click-driven (GDD §3/§3.1).
 
 | Asset | Notes (GDD ref) | Target res | Status |
 |---|---|---|---|
-| Road (sprite drawn on top of ground background) | Permanent blocker (§3/§4) | 256×128 per segment | Created |
-| Small tree (blocker, removed by Axe) | §4 | 160×160 | Created |
-| Large tree (blocker, removed by Saw) | §4 | 224×224 | Created |
+| Road | Baked into `empty_farm_landscape.png` (no separate sprite); road/decor cells blocked via `BLOCKED_MAP` in `main.gd` (§3/§4) | — | Created (in background) |
+| Tree (blocker, removed by Axe) | §4. Only one tree type — the large tree and Saw were removed from the game (2026-07) | 160×160 | Created |
 | Tree removal effect (stump) | §4 | 96×96 | Created |
-| Player Home | Pre-placed flavor structure (§3) | 256×256 | Created |
+| Player Home | Pre-placed flavor structure (§3). Uses `house_2.png` (`house_1.png` unused, e.g. future NPC house) | 256×256 | Created |
 | Barn (storage) | Stores animal/processed goods (§10) | 256×256 | Created |
 | Silo (storage) | Stores crops (§10) | 160×256 | Created |
 | Farm Plot (empty tilled soil) | Placeable, max 25 (§6) | 128×128 | Created |
@@ -41,14 +40,16 @@ No player character — the game is click-driven (GDD §3/§3.1).
 
 ## 3. Sprites — Crops (per crop: growth stages + harvestable state)
 
-3 growth stages each (sprout → mid → mature/harvestable). **One 3-cell sheet request per crop**, sliced on import.
+Crops are now Wheat / Beets / Cabbage (2026-07). All crops share one "planted"
+look with 2 variations (picked randomly on planting) and jump straight to a
+per-crop mature sprite — no intermediate stage.
 
 | Asset | Target res | Status |
 |---|---|---|
-| Corn — growth stages (3-cell sheet) | 96×96 per stage | Created |
-| Wheat — growth stages (3-cell sheet) | 96×96 per stage | Created |
-| Soybean — growth stages (3-cell sheet) | 96×96 per stage | Created |
-| Potato — growth stages (3-cell sheet) | 96×96 per stage | Created |
+| Planted sprout — shared, 2 variations (`planted_crops_1/2`) | 96×96 each | Created |
+| Wheat — mature (`mature_corn.png`, reads as golden grain) | 96×96 | Created |
+| Beets — mature (`mature_beets.png`) | 96×96 | Created |
+| Cabbage — mature (`mature_cabbage.png`) | 96×96 | Created |
 
 ## 4. Sprites — Items / Goods Icons
 
@@ -56,11 +57,11 @@ Needed for shop entries, storage views, and delivery/sell panel (§5, §9, §13.
 
 | Asset | Target res | Status |
 |---|---|---|
-| Corn, Wheat, Soybean, Potato — harvested crop icons (4-cell sheet `icons-crops`) | 96×96 each | Created |
-| Corn, Wheat, Soybean, Potato — seed icons (4-cell sheet `icons-seeds`) | 96×96 each | Created |
+| Wheat / Beets / Cabbage — harvested crop icons (wheat from old `icons-crops` sheet; `beets_icon.png`; cabbage cropped from `mature_cabbage.png`) | 96×96 each | Created |
+| Wheat / Beets / Cabbage — seed pouch icons | 96×96 each | **TODO** — beet & cabbage pouches are placeholder copies of the deleted corn/soybean pouches (`icon_beets_seed.png` / `icon_cabbage_seed.png`) |
 | Egg / Milk / Butter / Bread icons (4-cell sheet `icons-goods`) | 96×96 each | Created |
 | Chicken Feed / Cow Feed icons (2-cell sheet `icons-feed`) | 96×96 each | Created |
-| Scythe / Axe / Saw icons (3-cell sheet `icons-tools`) | 96×96 each | Created |
+| Scythe / Axe icons (from 3-cell sheet `icons-tools`; the saw cell is unused — saw removed from game) | 96×96 each | Created |
 | Coin / money icon | 96×96 | Created |
 | XP / star icon (progression) | Kenney `star.png` / `star_outline.png` usable as placeholder | Created (placeholder) |
 
@@ -70,8 +71,7 @@ No tileset — the ground is a single large hand-authored image.
 
 | Asset | Notes | Target res | Status |
 |---|---|---|---|
-| Farm ground background (one big image) | Whole playable farm as one grassy image with baked-in decorative clutter (§3). **Source PNG missing on disk (regen churn)** — game currently ships a procedural placeholder from `tools/prepare_assets.py`; replace when the Gemini 3.1 Pro regeneration lands | 1920×1080 | TODO (placeholder in game) |
-| Skyline background | Backdrop layer behind/around the farm ground | 1920×540 | Created |
+| Farm background (one big image) | `empty_farm_landscape.png` — full scene with sky, hills, village, roads and edge decor baked in; replaces the old ground + skyline + road layers | 1376×768 (native) | Created |
 
 ## 6. UI
 
@@ -86,7 +86,8 @@ Kenney UI Pack exists at `SourceArt/kenney_ui-pack/` (buttons, checkboxes, slide
 | Text input fields | Kenney `input_*` set | native | Created |
 | Dividers | Kenney `divider*` | native | Created |
 | Confirm/cancel glyphs (checkmark, cross) | Kenney `icon_checkmark` / `icon_cross` | native | Created |
-| Shop button glyph (bottom-left HUD, §11) | Basket glyph to sit on a Kenney button | 96×96 | Created |
+| Shop button (bottom-left HUD, §11) | `ui-shop-glyph.png` — full wooden badge button with basket + "Shop" label | 96×96 | Created |
+| Settings button (top-right HUD) | `ui-settings-icon.png` — full teal gear button; opens placeholder panel (no settings designed yet, see suggested-features.md) | 96×96 | Created |
 | Tool menu popup (background + slot frames, §3.1/§11) | Contextual menu next to clicked object | 480×192 | Created |
 | Shop overlay panel background (large tabbed window, §5/§11) | | 1440×840 | Created |
 | Shop tab strip styling (active/inactive, 2-cell sheet `ui-tabs`) | 4 tabs reuse the two states | 192×64 each | Created |

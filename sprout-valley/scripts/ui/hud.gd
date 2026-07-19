@@ -1,7 +1,7 @@
 extends CanvasLayer
 class_name Hud
-## Persistent HUD: money (top-left), level/XP (top-right), shop button
-## (bottom-left), mode banner with cancel button (top-center).
+## Persistent HUD: money (top-left), level/XP and settings button (top-right),
+## shop button (bottom-left), mode banner with cancel button (top-center).
 
 signal shop_pressed
 signal cancel_pressed
@@ -19,6 +19,7 @@ func _ready() -> void:
 	_build_money()
 	_build_level()
 	_build_shop_button()
+	_build_settings_button()
 	_build_banner()
 	Game.money_changed.connect(func(_m: int) -> void: _refresh())
 	Game.xp_changed.connect(func(_x: float, _l: int, _n: float) -> void: _refresh())
@@ -81,36 +82,68 @@ func _build_level() -> void:
 	_xp_bar_fill.size = Vector2(0, 6)
 	_xp_bar_bg.add_child(_xp_bar_fill)
 
-func _build_shop_button() -> void:
-	var btn := Button.new()
+func _art_button(tex_path: String, size: Vector2, tooltip: String) -> TextureButton:
+	## Button whose art already includes full button chrome.
+	var btn := TextureButton.new()
 	btn.focus_mode = Control.FOCUS_NONE
-	btn.custom_minimum_size = Vector2(64, 64)
+	btn.texture_normal = ItemDB.tex(tex_path)
+	btn.ignore_texture_size = true
+	btn.stretch_mode = TextureButton.STRETCH_KEEP_ASPECT_CENTERED
+	btn.custom_minimum_size = size
+	btn.size = size
+	btn.tooltip_text = tooltip
+	btn.mouse_entered.connect(func() -> void: btn.modulate = Color(1.12, 1.12, 1.12))
+	btn.mouse_exited.connect(func() -> void: btn.modulate = Color.WHITE)
+	return btn
+
+func _build_shop_button() -> void:
+	var btn := _art_button("res://assets/ui/shop_glyph.png", Vector2(68, 72), "Shop")
 	btn.anchor_top = 1.0
 	btn.anchor_bottom = 1.0
-	btn.position = Vector2(12, -76)
-	btn.tooltip_text = "Shop"
-	var sb := StyleBoxFlat.new()
-	sb.bg_color = Color(0.98, 0.86, 0.55)
-	sb.set_corner_radius_all(16)
-	sb.border_color = Color(0.55, 0.38, 0.22)
-	sb.set_border_width_all(3)
-	sb.shadow_color = Color(0, 0, 0, 0.3)
-	sb.shadow_size = 5
-	btn.add_theme_stylebox_override("normal", sb)
-	var sb_h := sb.duplicate()
-	sb_h.bg_color = Color(1.0, 0.93, 0.68)
-	btn.add_theme_stylebox_override("hover", sb_h)
-	btn.add_theme_stylebox_override("pressed", sb_h)
-	var glyph := TextureRect.new()
-	glyph.texture = ItemDB.tex("res://assets/ui/shop_glyph.png")
-	glyph.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	glyph.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	glyph.position = Vector2(10, 8)
-	glyph.size = Vector2(44, 48)
-	glyph.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	btn.add_child(glyph)
+	btn.position = Vector2(12, -84)
 	btn.pressed.connect(func() -> void: shop_pressed.emit())
 	add_child(btn)
+
+func _build_settings_button() -> void:
+	var btn := _art_button("res://assets/ui/settings_icon.png", Vector2(44, 44), "Settings")
+	btn.anchor_left = 1.0
+	btn.anchor_right = 1.0
+	btn.position = Vector2(-56, 58)
+	btn.pressed.connect(_toggle_settings)
+	add_child(btn)
+
+var _settings_panel: CenterContainer
+
+func _toggle_settings() -> void:
+	if _settings_panel != null:
+		_settings_panel.visible = not _settings_panel.visible
+		return
+	_settings_panel = CenterContainer.new()
+	_settings_panel.set_anchors_preset(Control.PRESET_FULL_RECT)
+	# only the panel itself should catch clicks, not the whole screen
+	_settings_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(_settings_panel)
+	var panel := PanelContainer.new()
+	panel.add_theme_stylebox_override("panel", _panel_style())
+	_settings_panel.add_child(panel)
+	var col := VBoxContainer.new()
+	col.add_theme_constant_override("separation", 8)
+	panel.add_child(col)
+	var title := Label.new()
+	title.text = "Settings"
+	title.add_theme_font_size_override("font_size", 22)
+	title.add_theme_color_override("font_color", Color(1.0, 0.92, 0.7))
+	col.add_child(title)
+	var note := Label.new()
+	note.text = "Nothing to configure yet."
+	note.add_theme_font_size_override("font_size", 14)
+	note.add_theme_color_override("font_color", Color(0.9, 0.85, 0.75))
+	col.add_child(note)
+	var close := Button.new()
+	close.text = "Close"
+	close.focus_mode = Control.FOCUS_NONE
+	close.pressed.connect(func() -> void: _settings_panel.visible = false)
+	col.add_child(close)
 
 var _banner_center: CenterContainer
 

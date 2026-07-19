@@ -1,6 +1,7 @@
 extends Node2D
 class_name FarmPlot
-## A tilled soil plot. Empty -> growing (3 stages) -> mature -> harvest.
+## A tilled soil plot. Empty -> growing (shared planted sprite, 2 variations
+## picked randomly on planting) -> mature (per-crop sprite) -> harvest.
 
 enum State { EMPTY, GROWING, MATURE }
 
@@ -53,14 +54,9 @@ func _process(delta: float) -> void:
 	grow_elapsed += delta
 	var frac := clampf(grow_elapsed / grow_total, 0.0, 1.0)
 	_bar_fill.size.x = (_bar_bg.size.x - 2.0) * frac
-	var stage := 1
-	if frac >= 1.0:
-		stage = 3
-	elif frac >= 0.5:
-		stage = 2
-	_set_crop_stage(stage)
 	if frac >= 1.0:
 		state = State.MATURE
+		_set_crop_tex(ItemDB.mature_tex(crop_id))
 		_bar_bg.visible = false
 		_ready_bubble.visible = true
 		_pop(_crop)
@@ -73,7 +69,7 @@ func plant(id: String) -> void:
 	_bar_bg.visible = true
 	_bar_fill.size.x = 0
 	_crop.visible = true
-	_set_crop_stage(1)
+	_set_crop_tex(ItemDB.planted_tex(randi_range(1, ItemDB.PLANTED_VARIANTS)))
 	_pop(_crop)
 
 func harvest() -> void:
@@ -84,8 +80,7 @@ func harvest() -> void:
 	_ready_bubble.visible = false
 	_pop(_soil)
 
-func _set_crop_stage(stage: int) -> void:
-	var t := ItemDB.crop_stage_tex(crop_id, stage)
+func _set_crop_tex(t: Texture2D) -> void:
 	if _crop.texture == t:
 		return
 	_crop.texture = t

@@ -1,26 +1,21 @@
 extends Node2D
 class_name FarmTree
-## Tree blocker. Small trees fall to the Axe, large trees to the Saw.
-## The used tool is consumed (one-use tools per design direction).
+## Tree blocker (1x1 cell). Falls to the Axe, which is consumed on use.
 
-var is_large := false
 var cell: Vector2i
 var footprint := Vector2i.ONE
 
 var _sprite: Sprite2D
 var _grid: FarmGrid
 
-func setup(large: bool, p_cell: Vector2i, grid: FarmGrid) -> void:
-	is_large = large
+func setup(p_cell: Vector2i, grid: FarmGrid) -> void:
 	cell = p_cell
 	_grid = grid
-	footprint = Vector2i(2, 2) if large else Vector2i.ONE
 
 func _ready() -> void:
 	_sprite = Sprite2D.new()
-	var tex_name := "tree_large" if is_large else "tree_small"
-	_sprite.texture = ItemDB.tex("res://assets/world/%s.png" % tex_name)
-	var w := BalanceData.get_value("disp_tree_large" if is_large else "disp_tree_small", 100.0)
+	_sprite.texture = ItemDB.tex("res://assets/world/tree_small.png")
+	var w := BalanceData.get_value("disp_tree_small", 72.0)
 	var s := w / _sprite.texture.get_width()
 	_sprite.scale = Vector2.ONE * s
 	# baseline at bottom of trunk
@@ -28,7 +23,7 @@ func _ready() -> void:
 	add_child(_sprite)
 
 func tool_needed() -> String:
-	return "saw" if is_large else "axe"
+	return "axe"
 
 func chop() -> void:
 	## Remove the tree: free its cells, sway + fade, leave a fading stump.

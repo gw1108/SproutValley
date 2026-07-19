@@ -3,6 +3,21 @@ extends Node2D
 
 const VIEW := Vector2(960, 540)
 
+# Cells covered by art baked into farm_landscape.png (dirt roads, the village
+# cottage, well, fences, big trees). '#' = permanently occupied, '.' = free.
+# 18 cols x 8 rows, matching FarmGrid. Derived from road-pixel coverage of the
+# background; tweak here if the background painting changes.
+const BLOCKED_MAP: Array[String] = [
+	"##########........",
+	".############.....",
+	"..####.....###....",
+	".###........###.#.",
+	"######.....######.",
+	"########.##.....##",
+	".########.........",
+	"########..........",
+]
+
 var grid: FarmGrid
 var hud: Hud
 var shop: ShopOverlay
@@ -29,37 +44,19 @@ func _ready() -> void:
 	_scatter_trees()
 
 func _build_background() -> void:
-	var sky := Sprite2D.new()
-	sky.texture = ItemDB.tex("res://assets/background/skyline.png")
-	sky.centered = false
-	sky.scale = VIEW / Vector2(sky.texture.get_size())
-	sky.z_index = -10
-	add_child(sky)
-
+	# one full-scene painting; roads and edge decor are baked in
 	var ground := Sprite2D.new()
-	ground.texture = ItemDB.tex("res://assets/background/farm_ground.png")
+	ground.texture = ItemDB.tex("res://assets/background/farm_landscape.png")
 	ground.centered = false
 	ground.scale = VIEW / Vector2(ground.texture.get_size())
-	ground.z_index = -9
+	ground.z_index = -10
 	add_child(ground)
 
-	# road: permanent unremovable blocker crossing the farm above the bottom row
-	var road_y := grid.origin.y + 7.0 * grid.cell_size
-	var road_h := BalanceData.get_value("disp_road_h", 70.0)
-	var road_tex := ItemDB.tex("res://assets/world/road.png")
-	var seg_w := road_tex.get_width() * (road_h / road_tex.get_height())
-	var x := -10.0
-	while x < VIEW.x + 10.0:
-		var seg := Sprite2D.new()
-		seg.texture = road_tex
-		seg.centered = false
-		seg.scale = Vector2.ONE * (road_h / road_tex.get_height())
-		seg.position = Vector2(x, road_y - 8.0)
-		seg.z_index = -8
-		add_child(seg)
-		x += seg_w
-	for cx in range(grid.cols):
-		grid.occupy(Vector2i(cx, 7), Vector2i.ONE, self)   # road cells: never free
+	# cells the painted roads/decor pass through: never free
+	for cy in range(BLOCKED_MAP.size()):
+		for cx in range(BLOCKED_MAP[cy].length()):
+			if BLOCKED_MAP[cy][cx] == "#":
+				grid.occupy(Vector2i(cx, cy), Vector2i.ONE, self)
 
 func _build_layers() -> void:
 	plot_layer = Node2D.new()
@@ -104,9 +101,10 @@ func _on_shop_pressed() -> void:
 	shop.open_shop()
 
 func _place_starting_structures() -> void:
-	_spawn_preplaced("player_home", Vector2i(0, 0))
-	_spawn_preplaced("silo", Vector2i(12, 0))
-	_spawn_preplaced("barn", Vector2i(15, 0))
+	# open grass pockets of the painted landscape (see BLOCKED_MAP)
+	_spawn_preplaced("player_home", Vector2i(13, 0))
+	_spawn_preplaced("silo", Vector2i(16, 0))
+	_spawn_preplaced("barn", Vector2i(13, 5))
 	_spawn_preplaced("delivery_box", Vector2i(16, 6))
 
 func _spawn_preplaced(id: String, cell: Vector2i) -> void:
@@ -145,27 +143,19 @@ func spawn_animal(kind: String) -> void:
 func _scatter_trees() -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 20260718
-	var n_small := int(BalanceData.get_value("tree_small_count", 7.0))
-	var n_large := int(BalanceData.get_value("tree_large_count", 5.0))
+	var n := int(BalanceData.get_value("tree_small_count", 7.0))
 	var placed := 0
 	var guard := 0
-	while placed < n_large and guard < 500:
-		guard += 1
-		var cell := Vector2i(rng.randi_range(1, grid.cols - 3), rng.randi_range(1, grid.rows - 3))
-		if grid.is_free(cell, Vector2i(2, 2)):
-			_spawn_tree(true, cell)
-			placed += 1
-	placed = 0
-	while placed < n_small and guard < 1000:
+	while placed < n and guard < 1000:
 		guard += 1
 		var cell := Vector2i(rng.randi_range(0, grid.cols - 1), rng.randi_range(0, grid.rows - 2))
 		if grid.is_free(cell, Vector2i.ONE):
-			_spawn_tree(false, cell)
+			_spawn_tree(cell)
 			placed += 1
 
-func _spawn_tree(large: bool, cell: Vector2i) -> void:
+func _spawn_tree(cell: Vector2i) -> void:
 	var t := FarmTree.new()
-	t.setup(large, cell, grid)
+	t.setup(cell, grid)
 	t.position = grid.footprint_bottom(cell, t.footprint)
 	grid.occupy(cell, t.footprint, t)
 	world.add_child(t)

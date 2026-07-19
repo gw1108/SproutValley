@@ -53,7 +53,7 @@ All world interaction is done by **clicking objects directly**:
 - Only tools the player **owns** appear (or unowned ones appear disabled — implementer's choice for the slice).
 - Picking a tool/action from the menu performs it immediately on the clicked object.
 - **Example — Farm Plot:** clicking a farm plot offers the **Scythe** (harvest, if the crop is grown) and the **seeds** in the player's possession (plant, if the plot is empty).
-- **Example — Tree:** clicking a small tree offers the **Axe**; a large tree offers the **Saw** (see §4).
+- **Example — Tree:** clicking a tree offers the **Axe** (see §4).
 
 ---
 
@@ -66,9 +66,10 @@ The **road** is also a blocker: it behaves like a very large tree that is **unre
 - To remove a blocker, the player must own the appropriate **tool**, then select it from the tree's click menu (§3.1).
 - **Tools:**
   - **Scythe** — harvests grown crops on farm plots. **The player starts with the Scythe** (free, not sold in the shop).
-  - **Axe** — chops down small trees (purchasable).
-  - **Saw** — cuts down large trees (purchasable).
-- Using the Axe/Saw on a tree destroys the blocker and frees the underlying tiles for building/planting.
+  - **Axe** — chops down trees (purchasable).
+- Using the Axe on a tree destroys the blocker and frees the underlying tile for building/planting.
+
+> **Cut content (2026-07):** the game originally had two tree sizes — small trees (Axe) and large 2×2 trees felled by a purchasable **Saw**. The large tree and the Saw were cut; there is now a single 1×1 tree type and the Axe is the only blocker-removal tool.
 
 ---
 
@@ -80,12 +81,12 @@ The shop is opened via a **button in the bottom-left** of the HUD. It opens a fu
 
 | Tab | Contents |
 |-----|----------|
-| **Farm Seeds** | Corn Seed, Wheat Seed, Soybean Seed, Potato Seed, Axe, Saw |
+| **Farm Seeds** | Corn Seed, Wheat Seed, Soybean Seed, Potato Seed, Axe (Saw: cut content, §4) |
 | **Animal Homes** | Chicken Coop, Cow Pasture, Dairy Barn, Bakery, Feed Mill |
 | **Animals** | Chickens, Cows |
 | **Production Buildings** | Dairy Barn, Bakery, Feed Mill |
 
-> Note: Some "buildings" straddle categories. For the slice, animal housing lives under **Animal Homes** and processors under **Production Buildings**. Tools (Axe/Saw) share the **Farm Seeds** tab to keep the shop at 4 tabs (see §13.1).
+> Note: Some "buildings" straddle categories. For the slice, animal housing lives under **Animal Homes** and processors under **Production Buildings**. Tools (Axe) share the **Farm Seeds** tab to keep the shop at 4 tabs (see §13.1).
 
 ### 5.2 Purchase Limits
 
@@ -225,8 +226,8 @@ For the slice, storage capacity may be treated as effectively unlimited, or give
 
 **In scope:**
 - Fixed top-down camera showing the whole farm (no player character, no panning)
-- Click-to-interact tool menu (Scythe harvesting, seed planting, Axe/Saw)
-- Tree blockers + Axe/Saw removal
+- Click-to-interact tool menu (Scythe harvesting, seed planting, Axe)
+- Tree blockers + Axe removal
 - Shop overlay with 4 tabs and purchase limits
 - 4 crop types with plant/grow/harvest → silo
 - Chicken Coop + Cow Pasture, 2 animal types → barn
@@ -234,6 +235,9 @@ For the slice, storage capacity may be treated as effectively unlimited, or give
 - Delivery-for-money mechanism
 - Barn + Silo storage
 - Player Home (flavor)
+
+**Cut content:**
+- Large (2×2) trees and the Saw tool (see §4)
 
 **Out of scope (post-slice):**
 - Multiple crop tiers / seasons / weather
@@ -249,7 +253,7 @@ For the slice, storage capacity may be treated as effectively unlimited, or give
 These were previously open questions. Recommendations below are the intended slice behavior.
 
 ### 13.1 Tools in the shop UI
-**Decision:** Keep the shop at **4 tabs**; Axe and Saw live in the **Farm Seeds** tab alongside consumable seeds. Simpler UI, no extra tab to build for the slice.
+**Decision:** Keep the shop at **4 tabs**; the Axe lives in the **Farm Seeds** tab alongside consumable seeds. Simpler UI, no extra tab to build for the slice. (The Saw was cut, see §4.)
 
 ### 13.2 Production recipes
 **Decision:** Single-input recipes where possible (simple, readable, easy to balance).
@@ -290,7 +294,7 @@ Each seed yields **2 crops** on harvest (see §6). Sell/XP values are per unit.
 | Farm Plot | 25 (scaling ok later) | Max 25 |
 | Scythe | Free (starting tool) | Harvests crops; not sold in shop |
 | Axe | 40 | Tool |
-| Saw | 40 | Tool |
+| ~~Saw~~ | ~~40~~ | Cut content (see §4) |
 | Chicken Coop | 150 | Max 1 |
 | Cow Pasture | 250 | Max 1 |
 | Feed Mill | 200 | Max 1 |

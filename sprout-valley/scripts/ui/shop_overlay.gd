@@ -122,9 +122,7 @@ func _refresh() -> void:
 					"Grows in %ds • sells %d" % [int(BalanceData.get_value(crop_id + "_grow_time", 60.0)), ItemDB.sell_price(crop_id)],
 					Game.count(seed_id))
 			_add_card("Axe", ItemDB.icon("axe"), int(BalanceData.get_value("axe_cost", 40.0)),
-				"Buy", _buy_item.bind("axe", "axe_cost"), "Chops small trees (single use)", Game.count("axe"))
-			_add_card("Saw", ItemDB.icon("saw"), int(BalanceData.get_value("saw_cost", 40.0)),
-				"Buy", _buy_item.bind("saw", "saw_cost"), "Cuts large trees (single use)", Game.count("saw"))
+				"Buy", _buy_item.bind("axe", "axe_cost"), "Chops trees (single use)", Game.count("axe"))
 			_add_card("Farm Plot", ItemDB.tex("res://assets/world/farm_plot.png"),
 				int(BalanceData.get_value("farm_plot_cost", 25.0)),
 				"Place", _place.bind("farm_plot"),

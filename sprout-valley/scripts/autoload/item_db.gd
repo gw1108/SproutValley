@@ -10,9 +10,8 @@ const WORLD_DIR := "res://assets/world/"
 # Goods that exist in inventory. storage: silo (crops) | barn (everything else).
 var items := {
 	"wheat": {"name": "Wheat", "icon": "icon_wheat", "sell": "wheat_sell", "xp": "wheat_xp", "storage": "silo"},
-	"corn": {"name": "Corn", "icon": "icon_corn", "sell": "corn_sell", "xp": "corn_xp", "storage": "silo"},
-	"soybean": {"name": "Soybean", "icon": "icon_soybean", "sell": "soybean_sell", "xp": "soybean_xp", "storage": "silo"},
-	"potato": {"name": "Potato", "icon": "icon_potato", "sell": "potato_sell", "xp": "potato_xp", "storage": "silo"},
+	"beets": {"name": "Beets", "icon": "icon_beets", "sell": "beets_sell", "xp": "beets_xp", "storage": "silo"},
+	"cabbage": {"name": "Cabbage", "icon": "icon_cabbage", "sell": "cabbage_sell", "xp": "cabbage_xp", "storage": "silo"},
 	"egg": {"name": "Egg", "icon": "icon_egg", "sell": "egg_sell", "xp": "egg_xp", "storage": "barn"},
 	"milk": {"name": "Milk", "icon": "icon_milk", "sell": "milk_sell", "xp": "milk_xp", "storage": "barn"},
 	"butter": {"name": "Butter", "icon": "icon_butter", "sell": "butter_sell", "xp": "butter_xp", "storage": "barn"},
@@ -20,25 +19,25 @@ var items := {
 	"chicken_feed": {"name": "Chicken Feed", "icon": "icon_chicken_feed", "sell": "", "xp": "", "storage": "barn"},
 	"cow_feed": {"name": "Cow Feed", "icon": "icon_cow_feed", "sell": "", "xp": "", "storage": "barn"},
 	"wheat_seed": {"name": "Wheat Seed", "icon": "icon_wheat_seed", "sell": "", "xp": "", "storage": "barn"},
-	"corn_seed": {"name": "Corn Seed", "icon": "icon_corn_seed", "sell": "", "xp": "", "storage": "barn"},
-	"soybean_seed": {"name": "Soybean Seed", "icon": "icon_soybean_seed", "sell": "", "xp": "", "storage": "barn"},
-	"potato_seed": {"name": "Potato Seed", "icon": "icon_potato_seed", "sell": "", "xp": "", "storage": "barn"},
+	"beets_seed": {"name": "Beet Seed", "icon": "icon_beets_seed", "sell": "", "xp": "", "storage": "barn"},
+	"cabbage_seed": {"name": "Cabbage Seed", "icon": "icon_cabbage_seed", "sell": "", "xp": "", "storage": "barn"},
 	"axe": {"name": "Axe", "icon": "icon_axe", "sell": "", "xp": "", "storage": "barn"},
-	"saw": {"name": "Saw", "icon": "icon_saw", "sell": "", "xp": "", "storage": "barn"},
 }
 
-# crop id -> seed item, grow time key, stage textures
+# crop id -> seed item, grow time key. All crops share the same planted look
+# (2 variations, picked randomly on planting) and have a per-crop mature texture.
+const PLANTED_VARIANTS := 2
+
 var crops := {
 	"wheat": {"seed": "wheat_seed", "grow": "wheat_grow_time"},
-	"corn": {"seed": "corn_seed", "grow": "corn_grow_time"},
-	"soybean": {"seed": "soybean_seed", "grow": "soybean_grow_time"},
-	"potato": {"seed": "potato_seed", "grow": "potato_grow_time"},
+	"beets": {"seed": "beets_seed", "grow": "beets_grow_time"},
+	"cabbage": {"seed": "cabbage_seed", "grow": "cabbage_grow_time"},
 }
 
 # recipe id -> building, inputs, output, craft-time key
 var recipes := {
 	"chicken_feed": {"building": "feed_mill", "inputs": {"wheat": 2}, "out": "chicken_feed", "qty": 1, "time": "chicken_feed_craft_time"},
-	"cow_feed": {"building": "feed_mill", "inputs": {"corn": 2, "soybean": 1}, "out": "cow_feed", "qty": 1, "time": "cow_feed_craft_time"},
+	"cow_feed": {"building": "feed_mill", "inputs": {"beets": 2, "cabbage": 1}, "out": "cow_feed", "qty": 1, "time": "cow_feed_craft_time"},
 	"butter": {"building": "dairy_barn", "inputs": {"milk": 3}, "out": "butter", "qty": 1, "time": "butter_craft_time"},
 	"bread": {"building": "bakery", "inputs": {"wheat": 2}, "out": "bread", "qty": 1, "time": "bread_craft_time"},
 }
@@ -69,8 +68,11 @@ func icon(item_id: String) -> Texture2D:
 		return tex(ICONS + items[item_id]["icon"] + ".png")
 	return null
 
-func crop_stage_tex(crop_id: String, stage: int) -> Texture2D:
-	return tex(CROPS_DIR + "%s_stage%d.png" % [crop_id, stage])
+func planted_tex(variant: int) -> Texture2D:
+	return tex(CROPS_DIR + "planted_%d.png" % clampi(variant, 1, PLANTED_VARIANTS))
+
+func mature_tex(crop_id: String) -> Texture2D:
+	return tex(CROPS_DIR + "%s_mature.png" % crop_id)
 
 func building_tex(building_id: String) -> Texture2D:
 	var b: Dictionary = buildings[building_id]

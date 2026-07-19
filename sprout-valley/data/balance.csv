@@ -2,21 +2,17 @@
 start_money,150,GDD 13.5
 harvest_yield,2,crops harvested per seed planted
 wheat_seed_cost,5,
-corn_seed_cost,8,
-soybean_seed_cost,10,
-potato_seed_cost,12,
+beets_seed_cost,8,
+cabbage_seed_cost,10,
 wheat_grow_time,60,seconds (user: 1-3 min per crop)
-corn_grow_time,90,
-soybean_grow_time,120,
-potato_grow_time,180,
+beets_grow_time,90,
+cabbage_grow_time,120,
 wheat_sell,12,
-corn_sell,18,
-soybean_sell,24,
-potato_sell,30,
+beets_sell,18,
+cabbage_sell,24,
 wheat_xp,0.75,
-corn_xp,1,
-soybean_xp,1.5,
-potato_xp,2,
+beets_xp,1,
+cabbage_xp,1.5,
 egg_sell,15,
 egg_xp,1,
 milk_sell,20,
@@ -28,7 +24,6 @@ bread_xp,3.5,
 farm_plot_cost,25,
 farm_plot_max,25,
 axe_cost,40,consumed on use (user direction)
-saw_cost,40,consumed on use (user direction)
 chicken_coop_cost,150,
 cow_pasture_cost,250,
 feed_mill_cost,200,
@@ -46,12 +41,10 @@ cow_feed_craft_time,45,
 butter_craft_time,60,
 bread_craft_time,45,
 xp_level_base,4,xpToNext = round(base*(1+ln(L)))
-tree_small_count,7,initial small trees on the farm
-tree_large_count,5,initial large trees
+tree_small_count,7,initial trees on the farm
 grid_cell,48,placement grid cell px
 disp_farm_plot,50,on-screen sprite width px
 disp_tree_small,72,
-disp_tree_large,126,
 disp_tree_stump,44,
 disp_player_home,150,
 disp_barn,150,
@@ -62,7 +55,6 @@ disp_dairy_barn,140,
 disp_bakery,105,
 disp_feed_mill,115,
 disp_delivery_box,78,
-disp_road_h,70,road strip on-screen height px
 disp_chicken,38,
 disp_cow,60,
 disp_crop,42,crop sprite width on a plot

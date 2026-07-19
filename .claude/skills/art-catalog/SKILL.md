@@ -5,7 +5,7 @@ description: Build or refresh the searchable catalog of art assets under SourceA
 
 # Art Catalog
 
-Purpose: agents should find and understand art assets by **grepping text**, not by opening image files. This skill maintains that text layer: `<root>/_catalog/catalog.jsonl` (one JSON line per asset: path, pixel size, detailed description, synonym tags, contact-sheet location, `used_by` game assets), immutable labeled contact sheets (~48 thumbnails each), a generated `<root>/ART_CATALOG.md` TOC, and a `pending_updates.jsonl` event log for source files that changed after being catalogued.
+Purpose: agents should find and understand art assets by **grepping text**, not by opening image files. This skill maintains that text layer: `<root>/_catalog/catalog.jsonl` (one JSON line per asset: path, pixel size, detailed description, synonym tags, contact-sheet location, `used_by` game assets), labeled contact sheets (~48 thumbnails each, kept free of stale cells), a generated `<root>/ART_CATALOG.md` TOC, and a `pending_updates.jsonl` event log for source files that changed after being catalogued.
 
 The script is `scripts/art_catalog.py` (stdlib + Pillow; `pip install pillow` if missing). Default root is `SourceArt/`, override with `--root`. Only raster formats (png/jpg/jpeg/gif/webp/bmp/tga) are catalogued; editor sources (psd/pdn/svg/…) are skipped and counted in the TOC. Folders named `ARCHIVE` and `_catalog` are excluded.
 
@@ -13,7 +13,7 @@ The script is `scripts/art_catalog.py` (stdlib + Pillow; `pip install pillow` if
 
 1. **Scan** (incremental — safe to run any time):
    `python .claude/skills/art-catalog/scripts/art_catalog.py scan`
-   Fast path is mtime+size; only mismatches get hashed, so thousands of unchanged files scan in seconds. New/changed files are placed on **new** sheets (old sheets are never touched). Output JSON reports `new`, `updated`, `deleted`, `sheets_created`, `needs_description`.
+   Fast path is mtime+size; only mismatches get hashed, so thousands of unchanged files scan in seconds. New/changed files are placed on **new** sheets. Deletions and updates are gc'd automatically: any sheet that lost a cell has its surviving entries repacked onto fresh sheets (descriptions are preserved — they live in the catalog, not the sheet), and sheet files no entry references are deleted. Output JSON reports `new`, `updated`, `deleted`, `sheets_created`, `sheets_deleted`, `needs_description`. If sheets ever drift out of sync anyway (e.g. from an older version of this script), `... repack` rebuilds every sheet from the current catalog without losing any descriptions.
 
 2. **Describe** (only if `needs_description > 0`):
    Run `... todo` — JSON of `{sheet: [{cell, path, w, h}, ...]}` for undescribed entries.

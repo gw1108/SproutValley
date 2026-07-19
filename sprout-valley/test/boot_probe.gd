@@ -5,13 +5,14 @@ extends Node
 ## "script" is a comma list of timed actions, e.g. "1.0:click:500,300"
 
 var out_path := "boot_probe.png"
+var main: Node
 
 func _ready() -> void:
 	Input.use_accumulated_input = false   # keep every synthetic drag motion event
 	var args := OS.get_cmdline_user_args()
 	if args.size() >= 1:
 		out_path = args[0]
-	var main: Node = load("res://scenes/Main.tscn").instantiate()
+	main = load("res://scenes/Main.tscn").instantiate()
 	add_child(main)
 	_run(args)
 
@@ -35,6 +36,15 @@ func _run(args: PackedStringArray) -> void:
 				get_node("/root/Game").add_item(kv[0], int(kv[1]))
 			elif parts[1] == "earn" and parts.size() >= 3:
 				get_node("/root/Game").earn(int(parts[2]))
+			elif parts[1] == "plot" and parts.size() >= 3:
+				var c := parts[2].split(",")
+				main.spawn_plot(Vector2i(int(c[0]), int(c[1])))
+			elif parts[1] == "plant" and parts.size() >= 3:
+				main.interaction.start_planting(parts[2])
+			elif parts[1] == "mature":
+				for p in get_tree().get_nodes_in_group("interactable"):
+					if p is FarmPlot and p.state == FarmPlot.State.GROWING:
+						p.grow_elapsed = p.grow_total
 			elif parts[1] == "esc":
 				var ev := InputEventKey.new()
 				ev.keycode = KEY_ESCAPE

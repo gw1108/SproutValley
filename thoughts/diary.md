@@ -49,4 +49,8 @@ I hit the usage limit after generating 16 images. Switched to just using FFmpeg 
 
 ---
 
+I only liked the cow/chicken art generally. So I had to redo all the art with manual green screening.
 
+> Fix up the game to use the new art assets and stop using the deleted art assets. The main background should be empty_farm_landscape.png. The roads are just built in to the background not a separate image. Use house 2 for the player house. There is now different crops: wheat, beets, and cabbage. All share the same planted version with 2 variations that should be picked randomly on planting. They do not have an intermediate phase so remove that. And there is a new setting and shop button.
+
+---
