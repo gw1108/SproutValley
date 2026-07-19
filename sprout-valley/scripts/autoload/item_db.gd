@@ -31,7 +31,7 @@ const PLANTED_VARIANTS := 2
 # Choppable world trees come in two sizes, each with N randomly-picked art
 # variants (tree_small_1.png … / tree_large_1.png …).
 const TREE_SMALL_VARIANTS := 3
-const TREE_LARGE_VARIANTS := 3
+const TREE_LARGE_VARIANTS := 2
 
 var crops := {
 	"wheat": {"grow": "wheat_grow_time"},

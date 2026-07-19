@@ -1,6 +1,13 @@
 ﻿id,value,notes
 start_money,15000,GDD 13.5
+select_flash_period,0.6,seconds per full yellow selection-flash pulse (tree/plot/building)
 harvest_yield,2,crops harvested per crop planted (replant some, sell the rest)
+sell_fly_duration,0.65,seconds for coin/xp icons to fly from sell click to HUD
+sell_fly_arc_height,130,pixels the fly curve arcs above the straight path
+sell_fly_icon_size,26,px size of the flying coin/xp icons
+sell_fly_max_icons,5,max flying icons per sale (per currency)
+sell_fly_stagger,0.07,seconds between successive flying icons
+sell_fly_origin_jitter,14,px random scatter of each icon's start point
 wheat_cost,5,cost to buy a wheat to start planting
 beets_cost,8,cost to buy a beet to start planting
 cabbage_cost,10,cost to buy a cabbage to start planting

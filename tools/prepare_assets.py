@@ -95,7 +95,12 @@ def sheet(rel_src, names, w, h, subdir):
 # --- World objects ---
 single("generated/world/tree-small.png", r"world\tree_small.png", 160, 160)
 # tree_stump, farm_plot, delivery_box: masters deleted; derived kept.
-# (large tree + saw were removed from the game entirely.)
+# Large tree: 2 random variants, direct-copied full-canvas (the game sizes them
+# by disp_tree_large against the untrimmed 197x355 canvas, so no trim/fit). The
+# old variant-1 master (tree-large.png) was deleted; only -2/-3 remain.
+save(load("generated/world/tree-large-2.png"), r"world\tree_large_1.png")
+save(load("generated/world/tree-large-3.png"), r"world\tree_large_2.png")
+# (saw was removed from the game entirely.)
 
 # --- Buildings ---
 single("house_2.png", r"buildings\player_home.png", 256, 256)
@@ -140,6 +145,7 @@ tools_img = key_dominant_colors(load("generated/icons/icons-tools-raw.png"))
 for name, cell in zip(["icon_scythe", "icon_axe"], slice_cells(tools_img, 3)):
     save(fit(cell, 96, 96), os.path.join(r"icons", name + ".png"))
 # icon_wheat, seed pouches, icon_coin: masters deleted; derived kept.
+single("generated/ui/xp-icon.png", r"icons\icon_xp.png", 96, 96)
 
 # --- UI ---
 single("generated/ui/ui-shop-glyph.png", r"ui\shop_glyph.png", 96, 96)

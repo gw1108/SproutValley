@@ -4,6 +4,7 @@ class_name Hud
 ## shop button (bottom-left), mode banner with cancel button (top-center).
 
 signal shop_pressed
+signal settings_pressed
 signal cancel_pressed
 
 var _money_label: Label
@@ -13,6 +14,8 @@ var _xp_bar_bg: ColorRect
 var _banner: PanelContainer
 var _banner_label: Label
 var _money_box: Control
+var _level_box: Control
+var _fx_layer: CanvasLayer
 
 func _ready() -> void:
 	layer = 10
@@ -21,6 +24,8 @@ func _ready() -> void:
 	_build_shop_button()
 	_build_settings_button()
 	_build_banner()
+	_build_fx_layer()
+	Game.sold.connect(_on_sold)
 	Game.money_changed.connect(func(_m: int) -> void: _refresh())
 	Game.xp_changed.connect(func(_x: float, _l: int, _n: float) -> void: _refresh())
 	Game.level_up.connect(_on_level_up)
@@ -81,6 +86,7 @@ func _build_level() -> void:
 	_xp_bar_fill.position = Vector2(1, 1)
 	_xp_bar_fill.size = Vector2(0, 6)
 	_xp_bar_bg.add_child(_xp_bar_fill)
+	_level_box = panel
 
 func _art_button(tex_path: String, size: Vector2, tooltip: String) -> TextureButton:
 	## Button whose art already includes full button chrome.
@@ -115,6 +121,7 @@ func _build_settings_button() -> void:
 var _settings_panel: CenterContainer
 
 func _toggle_settings() -> void:
+	settings_pressed.emit()
 	if _settings_panel != null:
 		_settings_panel.visible = not _settings_panel.visible
 		return
@@ -175,6 +182,56 @@ func set_mode_banner(text: String, show: bool) -> void:
 	_banner_center.visible = show and text != ""
 	_banner_label.text = text
 
+func _build_fx_layer() -> void:
+	# Flying gain icons render on their own layer so they pass over overlays
+	# like the sell panel (layer 20).
+	_fx_layer = CanvasLayer.new()
+	_fx_layer.layer = 30
+	add_child(_fx_layer)
+
+func _on_sold(_item_id: String, n: int) -> void:
+	var origin := _fx_layer.get_viewport().get_mouse_position()
+	var icons := clampi(n, 1, int(BalanceData.get_value("sell_fly_max_icons", 5.0)))
+	var stagger := BalanceData.get_value("sell_fly_stagger", 0.07)
+	for i in icons:
+		var last := i == icons - 1
+		_fly_icon("res://assets/icons/icon_coin.png", origin, _money_box, i * stagger, last)
+		_fly_icon("res://assets/icons/icon_xp.png", origin, _level_box, i * stagger, last)
+
+func _fly_icon(tex_path: String, from: Vector2, target_box: Control, delay: float, pulse_on_arrive: bool) -> void:
+	var icon_size := BalanceData.get_value("sell_fly_icon_size", 26.0)
+	var dur := BalanceData.get_value("sell_fly_duration", 0.65)
+	var arc := BalanceData.get_value("sell_fly_arc_height", 130.0)
+	var jitter := BalanceData.get_value("sell_fly_origin_jitter", 14.0)
+	from += Vector2(randf_range(-jitter, jitter), randf_range(-jitter, jitter))
+	var to := target_box.get_global_rect().get_center()
+	var ctrl := (from + to) * 0.5 + Vector2(0, -arc)
+	var half := Vector2(icon_size, icon_size) / 2.0
+	var spr := TextureRect.new()
+	spr.texture = ItemDB.tex(tex_path)
+	spr.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	spr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	spr.size = Vector2(icon_size, icon_size)
+	spr.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	spr.position = from - half
+	spr.visible = delay <= 0.0
+	_fx_layer.add_child(spr)
+	var tw := spr.create_tween()
+	if delay > 0.0:
+		tw.tween_interval(delay)
+		tw.tween_callback(func() -> void: spr.visible = true)
+	tw.tween_method(func(t: float) -> void:
+		spr.position = from.lerp(ctrl, t).lerp(ctrl.lerp(to, t), t) - half,
+		0.0, 1.0, dur).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	if pulse_on_arrive:
+		tw.tween_callback(func() -> void: _pulse_box(target_box))
+	tw.tween_callback(spr.queue_free)
+
+func _pulse_box(box: Control) -> void:
+	var tw := box.create_tween()
+	tw.tween_property(box, "modulate", Color(1.5, 1.4, 1.0), 0.08)
+	tw.tween_property(box, "modulate", Color.WHITE, 0.3)
+
 func flash_money() -> void:
 	var tw := _money_box.create_tween()
 	tw.tween_property(_money_box, "modulate", Color(1.6, 0.6, 0.6), 0.1)
@@ -192,14 +249,13 @@ func _on_level_up(new_level: int) -> void:
 	lbl.add_theme_color_override("font_color", Color(1.0, 0.9, 0.4))
 	lbl.add_theme_color_override("font_outline_color", Color(0.4, 0.25, 0.1))
 	lbl.add_theme_constant_override("outline_size", 8)
-	lbl.anchor_left = 0.5
-	lbl.anchor_right = 0.5
-	lbl.anchor_top = 0.5
-	lbl.anchor_bottom = 0.5
+	# Fill the whole screen and center the text so the popup sits at the camera center.
+	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	lbl.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(lbl)
 	await get_tree().process_frame
-	lbl.position.x = -lbl.size.x / 2.0
-	lbl.position.y = -lbl.size.y / 2.0
 	var tw := lbl.create_tween()
 	lbl.scale = Vector2(0.3, 0.3)
 	lbl.pivot_offset = lbl.size / 2.0

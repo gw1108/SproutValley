@@ -5,6 +5,7 @@ signal money_changed(amount: int)
 signal inventory_changed(item_id: String, count: int)
 signal xp_changed(xp: float, level: int, to_next: float)
 signal level_up(level: int)
+signal sold(item_id: String, n: int)
 
 var money: int = 0
 var xp_in_level: float = 0.0
@@ -84,4 +85,5 @@ func sell(item_id: String, n: int) -> void:
 	remove_item(item_id, n)
 	earn(ItemDB.sell_price(item_id) * n)
 	add_xp(ItemDB.xp_value(item_id) * n)
+	sold.emit(item_id, n)
 	get_tree().call_group("main", "play_sfx", "switch-b")

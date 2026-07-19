@@ -34,6 +34,9 @@ func _run(args: PackedStringArray) -> void:
 			elif parts[1] == "give" and parts.size() >= 3:
 				var kv := parts[2].split(",")
 				get_node("/root/Game").add_item(kv[0], int(kv[1]))
+			elif parts[1] == "sell" and parts.size() >= 3:
+				var skv := parts[2].split(",")
+				get_node("/root/Game").sell(skv[0], int(skv[1]))
 			elif parts[1] == "earn" and parts.size() >= 3:
 				get_node("/root/Game").earn(int(parts[2]))
 			elif parts[1] == "plot" and parts.size() >= 3:

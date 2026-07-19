@@ -111,3 +111,13 @@ func click_rect() -> Rect2:
 	# by the front-most (largest y) tie-break in InteractionManager._object_at
 	var half := _grid_half()
 	return Rect2(global_position - half, half * 2.0)
+
+func hit_test(pos: Vector2) -> bool:
+	# the soil sprite is a diamond, so clicks in the bounding box's corners
+	# belong to neighbouring cells, not this plot
+	var half := _grid_half()
+	var d := pos - global_position
+	return absf(d.x) / half.x + absf(d.y) / half.y <= 1.0
+
+func set_selected(on: bool) -> void:
+	FarmTree.flash_selected(self, on)

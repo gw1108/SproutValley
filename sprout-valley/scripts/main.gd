@@ -99,6 +99,7 @@ func _build_ui() -> void:
 	add_child(interaction)
 
 	hud.shop_pressed.connect(_on_shop_pressed)
+	hud.settings_pressed.connect(interaction.cancel_mode)
 	hud.cancel_pressed.connect(interaction.cancel_mode)
 	shop.request_place.connect(interaction.start_placing)
 	shop.request_animal.connect(spawn_animal)
@@ -139,7 +140,7 @@ func spawn_animal(kind: String) -> void:
 	if home == null:
 		return
 	var a := Animal.new()
-	a.setup(kind, home)
+	a.setup(kind, home, grid)
 	world.add_child(a)
 
 func _spawn_starting_trees() -> void:

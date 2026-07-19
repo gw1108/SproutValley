@@ -8,6 +8,7 @@ enum State { HUNGRY, EATING, PRODUCING }
 
 var kind: String              # "chicken" | "cow"
 var home: Structure
+var _bounds: Rect2            # wander area, clipped to the walkable map
 
 var state: int = State.HUNGRY
 var timer: float = 0.0
@@ -21,9 +22,14 @@ var _wander_target: Vector2
 var _wander_pause: float = 0.0
 var _feed_check: float = 0.0
 
-func setup(p_kind: String, p_home: Structure) -> void:
+func setup(p_kind: String, p_home: Structure, grid: FarmGrid) -> void:
 	kind = p_kind
 	home = p_home
+	# Wander only where the home strip overlaps the walkable map, so animals
+	# never stray off the ground into the off-map void.
+	_bounds = home.home_rect().intersection(grid.play_rect)
+	if _bounds.get_area() <= 0.0:
+		_bounds = home.home_rect()
 
 func _ready() -> void:
 	_idle_tex = ItemDB.tex("res://assets/animals/%s_idle.png" % kind)
@@ -55,7 +61,9 @@ func _bubble_pos() -> void:
 		_bubble.position = Vector2(10, -_sprite.texture.get_height() * _sprite.scale.y - 10)
 
 func _random_home_point() -> Vector2:
-	var r := home.home_rect().grow(-8.0)
+	var r := _bounds.grow(-8.0)
+	if r.get_area() <= 0.0:
+		r = _bounds
 	return Vector2(randf_range(r.position.x, r.end.x), randf_range(r.position.y, r.end.y))
 
 func _process(delta: float) -> void:
@@ -101,4 +109,5 @@ func _wander(delta: float) -> void:
 		_wander_target = _random_home_point()
 		return
 	global_position += to_target.normalized() * speed * delta
+	global_position = global_position.clamp(_bounds.position, _bounds.end)
 	_sprite.flip_h = to_target.x > 0.0

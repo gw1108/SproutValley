@@ -18,6 +18,13 @@ var grid: FarmGrid
 var radial: RadialMenu
 
 var _ghost: Sprite2D
+var _selected: Node2D              # object flashing while its radial menu is open
+
+func _ready() -> void:
+	# drop the selection highlight whenever the radial menu closes (pick made,
+	# clicked outside, or ESC)
+	if radial != null and not radial.closed.is_connected(_deselect):
+		radial.closed.connect(_deselect)
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
@@ -51,6 +58,9 @@ func _on_press(pos: Vector2) -> void:
 			var obj: Node2D = _object_at(pos)
 			if obj != null:
 				_open_menu_for(obj, pos)
+			else:
+				# clicked ground/path/nothing selectable -> drop any selection
+				cancel_mode()
 		Mode.PLANT, Mode.HARVEST:
 			# Tapping empty ground (no plot under the cursor) backs out of the mode,
 			# same as pressing Done or ESC. Tapping a plot still plants/harvests.
@@ -69,7 +79,8 @@ func _object_at(pos: Vector2) -> Node2D:
 	for obj in get_tree().get_nodes_in_group("interactable"):
 		if not is_instance_valid(obj):
 			continue
-		if obj.click_rect().has_point(pos):
+		var hit: bool = obj.hit_test(pos) if obj.has_method("hit_test") else obj.click_rect().has_point(pos)
+		if hit:
 			# front-most (largest baseline y) wins, matching y-sort
 			if obj.global_position.y > best_y:
 				best_y = obj.global_position.y
@@ -89,7 +100,19 @@ func _open_menu_for(obj: Node2D, pos: Vector2) -> void:
 	if options.is_empty():
 		return
 	main.play_sfx("click-a")
+	_select(obj)
 	radial.open(pos, options)
+
+func _select(obj: Node2D) -> void:
+	_deselect()
+	_selected = obj
+	if obj.has_method("set_selected"):
+		obj.set_selected(true)
+
+func _deselect() -> void:
+	if is_instance_valid(_selected) and _selected.has_method("set_selected"):
+		_selected.set_selected(false)
+	_selected = null
 
 func _plot_options(plot: FarmPlot) -> Array:
 	var options: Array = []
@@ -280,6 +303,10 @@ func _try_place(pos: Vector2) -> void:
 		cancel_mode()
 
 func cancel_mode() -> void:
+	# also drops any open radial menu + selection highlight (radial.close()
+	# emits `closed`, which triggers _deselect)
+	if radial != null and radial.visible:
+		radial.close()
 	mode = Mode.IDLE
 	plant_crop = ""
 	place_id = ""

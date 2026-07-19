@@ -102,3 +102,6 @@ func home_rect() -> Rect2:
 func click_rect() -> Rect2:
 	var size := _sprite.texture.get_size() * _sprite.scale
 	return Rect2(global_position - Vector2(size.x * 0.5, size.y), Vector2(size.x, size.y))
+
+func set_selected(on: bool) -> void:
+	FarmTree.flash_selected(self, on)
