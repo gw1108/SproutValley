@@ -8,7 +8,7 @@ https://georgewang.itch.io/sprout-valley
 
 ## 🎥 Video
 
-Watch the gameplay video here: **[https://youtu.be/uuUeJOCP-ow](https://youtu.be/uuUeJOCP-ow)**
+Watch the gameplay video here: **[https://youtu.be/JtmdU_SEURk)**
 
 ## About the Game
 
