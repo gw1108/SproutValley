@@ -2,6 +2,10 @@
 
 A cozy top-down 2D farming simulator built in **Godot 4**, in the spirit of Hay Day and Stardew Valley — with a storybook-style soft cartoon look.
 
+# Itch.io webgl version
+
+https://georgewang.itch.io/sprout-valley
+
 ## 🎥 Video
 
 Watch the gameplay video here: **[https://youtu.be/uuUeJOCP-ow](https://youtu.be/uuUeJOCP-ow)**
