@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
   Export the Sprout Valley web build and upload it to itch.io via butler.
 
@@ -43,7 +43,8 @@ $proj    = Join-Path $root 'sprout-valley'
 $outDir  = Join-Path $proj 'build\web'
 $butler  = Join-Path $PSScriptRoot 'butler\butler.exe'
 $cfgFile = Join-Path $PSScriptRoot 'itch-deploy.config.json'
-$godot   = 'C:\Program Files\Godot\godot.exe'
+$godot   = try { (Get-Command godot -ErrorAction Stop).Source }
+           catch { 'C:\Program Files\Godot\godot.exe' }  # fallback if not on PATH
 
 function Write-Note($m, $c = 'Cyan') { Write-Host "[deploy-itch] $m" -ForegroundColor $c }
 
@@ -84,7 +85,11 @@ if ($SkipExport) {
   if (-not (Test-Path $godot)) { Write-Note "Godot not found at $godot" 'Red'; exit 1 }
   New-Item -ItemType Directory -Force $outDir | Out-Null
   Write-Note "exporting Web build -> $outDir"
+  # Relax Stop while capturing stderr: in PS 5.1, 2>&1 on a native exe under
+  # ErrorActionPreference=Stop throws NativeCommandError on the first stderr line.
+  $eap = $ErrorActionPreference; $ErrorActionPreference = 'Continue'
   $log = & $godot --headless --path $proj --export-release 'Web' (Join-Path $outDir 'index.html') 2>&1
+  $ErrorActionPreference = $eap
   $ok = (Test-Path (Join-Path $outDir 'index.html')) -and
         (Test-Path (Join-Path $outDir 'index.wasm')) -and
         (Test-Path (Join-Path $outDir 'index.pck'))

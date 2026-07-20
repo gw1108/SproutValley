@@ -31,6 +31,12 @@ func add_xp(amount: float) -> void:
 		level_up.emit(level)
 	xp_changed.emit(xp_in_level, level, xp_to_next())
 
+func unlock_level(id: String) -> int:
+	return int(BalanceData.get_value("unlock_" + id, 1.0))
+
+func is_unlocked(id: String) -> bool:
+	return level >= unlock_level(id)
+
 func can_afford(cost: int) -> bool:
 	return money >= cost
 

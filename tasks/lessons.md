@@ -18,6 +18,12 @@ FarmGrid has origin (48, 120), not (0, 0) — when computing world/cell position
 ### BootProbe run mode
 Run BootProbe WITHOUT `--headless` — it needs a render context to save screenshots; with `--headless` it hangs and writes no image.
 
+### PowerShell script encoding
+Save `.ps1` files as UTF-8 **with BOM** — Windows PowerShell 5.1 reads BOM-less files as ANSI, so an em dash (`—`) misdecodes to `â€”` whose last char is a smart quote that PowerShell parses as a string delimiter, causing bogus "missing terminator" errors.
+
+### Godot CSVs read via FileAccess
+Godot auto-imports `.csv` as translations, so exports pack the generated `.translation` files but NOT the raw CSV — any `FileAccess.open("res://*.csv")` works in-editor but fails in builds. Set the file's `.import` to `importer="keep"` (and delete stray `*.translation` siblings) for every data CSV.
+
 ### agy target paths
 agy's shell tool runs from its own scratch dir, not the launch cwd — always give agy ABSOLUTE file paths for outputs (relative paths land in `~/.gemini/antigravity-cli/scratch/`).
 

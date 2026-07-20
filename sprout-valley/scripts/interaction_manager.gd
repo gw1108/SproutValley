@@ -119,6 +119,8 @@ func _plot_options(plot: FarmPlot) -> Array:
 	if plot.state == FarmPlot.State.EMPTY:
 		for crop_id in ItemDB.crops:
 			var owned := Game.count(crop_id)
+			if owned <= 0 and not Game.is_unlocked(crop_id):
+				continue
 			options.append({
 				"id": crop_id,
 				"icon": ItemDB.icon(crop_id),

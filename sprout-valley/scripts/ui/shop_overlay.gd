@@ -95,6 +95,9 @@ func _ready() -> void:
 	Game.inventory_changed.connect(func(_i: String, _c: int) -> void:
 		if visible:
 			_refresh())
+	Game.level_up.connect(func(_l: int) -> void:
+		if visible:
+			_refresh())
 
 func open_shop() -> void:
 	visible = true
@@ -115,20 +118,32 @@ func _refresh() -> void:
 	match _current_tab:
 		0:
 			for crop_id in ItemDB.crops:
+				if not Game.is_unlocked(crop_id):
+					_add_locked_card(ItemDB.items[crop_id]["name"], ItemDB.icon(crop_id), Game.unlock_level(crop_id))
+					continue
 				_add_card(ItemDB.items[crop_id]["name"], ItemDB.icon(crop_id),
 					int(BalanceData.get_value(crop_id + "_cost", 5.0)),
 					"Buy", _buy_item.bind(crop_id, crop_id + "_cost"),
 					"Grows in %ds • yields %d • sells %d" % [int(BalanceData.get_value(crop_id + "_grow_time", 60.0)), int(BalanceData.get_value("harvest_yield", 2.0)), ItemDB.sell_price(crop_id)],
 					Game.count(crop_id))
-			_add_card("Axe", ItemDB.icon("axe"), int(BalanceData.get_value("axe_cost", 40.0)),
-				"Buy", _buy_item.bind("axe", "axe_cost"), "Removes small trees (single use)", Game.count("axe"))
-			_add_card("Saw", ItemDB.icon("saw"), int(BalanceData.get_value("saw_cost", 90.0)),
-				"Buy", _buy_item.bind("saw", "saw_cost"), "Removes big trees (single use)", Game.count("saw"))
-			_add_card("Farm Plot", ItemDB.tex("res://assets/world/farm_plot.png"),
-				int(BalanceData.get_value("farm_plot_cost", 25.0)),
-				"Place", _place.bind("farm_plot"),
-				"%d/%d placed" % [Game.placed("farm_plot"), int(BalanceData.get_value("farm_plot_max", 25.0))],
-				-1, Game.placed("farm_plot") >= int(BalanceData.get_value("farm_plot_max", 25.0)))
+			if Game.is_unlocked("axe"):
+				_add_card("Axe", ItemDB.icon("axe"), int(BalanceData.get_value("axe_cost", 40.0)),
+					"Buy", _buy_item.bind("axe", "axe_cost"), "Removes small trees (single use)", Game.count("axe"))
+			else:
+				_add_locked_card("Axe", ItemDB.icon("axe"), Game.unlock_level("axe"))
+			if Game.is_unlocked("saw"):
+				_add_card("Saw", ItemDB.icon("saw"), int(BalanceData.get_value("saw_cost", 90.0)),
+					"Buy", _buy_item.bind("saw", "saw_cost"), "Removes big trees (single use)", Game.count("saw"))
+			else:
+				_add_locked_card("Saw", ItemDB.icon("saw"), Game.unlock_level("saw"))
+			if Game.is_unlocked("farm_plot"):
+				_add_card("Farm Plot", ItemDB.tex("res://assets/world/farm_plot.png"),
+					int(BalanceData.get_value("farm_plot_cost", 25.0)),
+					"Place", _place.bind("farm_plot"),
+					"%d/%d placed" % [Game.placed("farm_plot"), int(BalanceData.get_value("farm_plot_max", 25.0))],
+					-1, Game.placed("farm_plot") >= int(BalanceData.get_value("farm_plot_max", 25.0)))
+			else:
+				_add_locked_card("Farm Plot", ItemDB.tex("res://assets/world/farm_plot.png"), Game.unlock_level("farm_plot"))
 		1:
 			_add_building_card("chicken_coop", "Home for chickens • crafts Chicken Feed")
 			_add_building_card("barn", "Home for cows • crafts Cow Feed")
@@ -139,13 +154,23 @@ func _refresh() -> void:
 			_add_building_card("dairy_barn", "3 Milk → Butter")
 			_add_building_card("bakery", "2 Wheat → Bread")
 
+func _add_locked_card(name_text: String, icon: Texture2D, lv: int) -> void:
+	_add_card(name_text, icon, 0, "Lv %d" % lv, func() -> void: pass,
+		"Unlocks at level %d" % lv, -1, true)
+
 func _add_building_card(id: String, desc: String) -> void:
 	var b: Dictionary = ItemDB.buildings[id]
+	if not Game.is_unlocked(id):
+		_add_locked_card(b["name"], ItemDB.building_tex(id), Game.unlock_level(id))
+		return
 	var owned := Game.placed(id) >= int(b.get("max", 1))
 	_add_card(b["name"], ItemDB.building_tex(id), int(BalanceData.get_value(b["cost"], 100.0)),
 		"Owned" if owned else "Place", _place.bind(id), desc, -1, owned)
 
 func _add_animal_card(kind: String, home_id: String, desc: String) -> void:
+	if not Game.is_unlocked(kind):
+		_add_locked_card(kind.capitalize(), ItemDB.tex("res://assets/animals/%s_idle.png" % kind), Game.unlock_level(kind))
+		return
 	var maxn := int(BalanceData.get_value(kind + "_max", 4.0))
 	var have: int = Game.animal_counts.get(kind, 0)
 	var no_home := Game.placed(home_id) == 0

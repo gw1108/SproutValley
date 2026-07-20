@@ -1,0 +1,53 @@
+# Workshop project config — versioned with your repo.
+# EVERY key is optional: an empty file runs one 'main' pipeline (claude, all
+# task types, no worktrees). Uncomment what you need.
+
+[project]
+name = "SproutValley"
+# trunk  = "main"          # branch pipelines fork from / merge into (default: current)
+# verify = "npm test"      # gate command, exit 0 = pass — strongly recommended
+
+# [git]
+# worktrees = "auto"       # auto | on | off — auto enables worktrees when >1 pipeline
+
+# [safety]
+# max_concurrent   = 2     # simultaneous agent passes across pipelines
+# breaker_failures = 5     # consecutive failed passes -> pipeline halts
+# wedge_minutes    = 35    # in-flight pass older than this is killed (keep above agy's 30m print-timeout)
+
+# [spice]                  # anti-circling persona/noun injection
+# personas = "general"     # general | gamedev | path/to/pool.txt
+# nouns    = "general"
+
+# ---- Task-type routing: type -> {agent, model, effort} -------------------
+# A task's routing precedence: per-task pin > this table > pipeline bundle.
+# effort: low|medium|high|xhigh|max (ignored by agents that don't support it)
+#
+# [types.code]
+# agent  = "claude"
+# model  = "claude-opus-4-8"
+# effort = "high"
+#
+# [types.merge-conflict]   # defining this enables agent-resolved conflicts
+# agent  = "claude"
+# model  = "claude-opus-4-8"
+# effort = "high"
+
+# ---- Pipelines: parallel worker lanes -------------------------------------
+# Each pipeline always drains its OWN backlog first (any type), and also the
+# shared backlog (filtered by 'types') unless drain_main = false.
+#
+# [[pipelines]]
+# name    = "code"
+# types   = ["code", "tests", "docs", "merge-conflict"]
+# agent   = "claude"
+# effort  = "high"
+#
+# [[pipelines]]
+# name       = "art"
+# types      = ["art", "audio"]
+# agent      = "agy"
+# model      = "gemini-3-flash"
+# invent     = false       # blind driver: only works operator-queued tasks
+# drain_main = true
+# mode       = "discover"  # goal (default, invents+proposes) | discover (proposes only) | drain (backlog-only)

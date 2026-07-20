@@ -1,74 +1,86 @@
-﻿id,value,notes
-start_money,15000,GDD 13.5
-select_flash_period,0.6,seconds per full yellow selection-flash pulse (tree/plot/building)
+﻿id,value,notes,
+start_money,100,GDD 13.5,
+select_flash_period,0.6,seconds per full yellow selection-flash pulse (tree/plot/building),
 harvest_yield,2,crops harvested per crop planted (replant some, sell the rest)
-sell_fly_duration,0.65,seconds for coin/xp icons to fly from sell click to HUD
-sell_fly_arc_height,130,pixels the fly curve arcs above the straight path
-sell_fly_icon_size,26,px size of the flying coin/xp icons
-sell_fly_max_icons,5,max flying icons per sale (per currency)
-sell_fly_stagger,0.07,seconds between successive flying icons
-sell_fly_origin_jitter,14,px random scatter of each icon's start point
-wheat_cost,5,cost to buy a wheat to start planting
-beets_cost,8,cost to buy a beet to start planting
-cabbage_cost,10,cost to buy a cabbage to start planting
-wheat_grow_time,7,seconds (user: 1-3 min per crop)
-beets_grow_time,12,
-cabbage_grow_time,60,
-wheat_sell,9,
-beets_sell,16,
-cabbage_sell,24,
-wheat_xp,0.75,
-beets_xp,1,
-cabbage_xp,1.5,
-egg_sell,15,
-egg_xp,1,
-milk_sell,20,
-milk_xp,1.5,
-butter_sell,75,
-butter_xp,5,
-bread_sell,50,
-bread_xp,3.5,
-farm_plot_cost,25,
-farm_plot_max,25,
-axe_cost,40,consumed on use — removes small trees (user direction)
-saw_cost,90,consumed on use — removes big trees; costlier than the axe (user direction)
-chicken_coop_cost,150,
-barn_cost,250,home for cows (replaced cow pasture)
-dairy_barn_cost,300,
-bakery_cost,300,
-chicken_cost,30,
-cow_cost,60,
-chicken_max,6,housing capacity of the single coop
-cow_max,4,housing capacity of the single barn
-chicken_cycle_time,20,production seconds after eating
-cow_cycle_time,60,
-animal_eat_duration,2.5,seconds showing the eat pose
-chicken_feed_craft_time,20,
-cow_feed_craft_time,45,
-butter_craft_time,60,
-bread_craft_time,45,
-xp_level_base,4,xpToNext = round(base*(1+ln(L)))
-tree_small_count,7,initial trees on the farm
-grid_half_w,48,half-width px of a grid diamond cell (full diamond 96 px wide)
-grid_half_h,24,half-height px of a grid diamond cell (24/48 = 26.6 deg isometric edge angle)
-disp_tree_small,72,
-disp_tree_large,120,on-screen width px of a big (saw-only) tree
-tree_jitter,8,max random x/y px offset applied to placed trees so rows/columns don't align
-disp_player_home,150,
-disp_barn,150,
-disp_chicken_coop,105,
-disp_dairy_barn,140,
-disp_bakery,105,
-disp_delivery_box,78,
-disp_chicken,38,
-disp_cow,60,
-disp_crop,84,crop sprite width on a plot (tile is 96 px wide; ~fills the plot)
-disp_crop_base_y,18,crop sprite bottom offset below cell centre (tile bottom vertex is 24)
-animal_wander_speed,22,px per second
-radial_button_size,52,radial menu button diameter px
-radial_radius,56,radial menu ring radius px
-blocker_min_coverage,0.02,min fraction of a cell a road blocker must cover to block it
-deposit_icon_size,28,on-screen width px of the harvest/collect icon that flies to the home
-deposit_rise,40,px the deposit icon pops upward before flying to the home
-deposit_rise_time,0.35,seconds for the deposit icon to pop up
-deposit_fly_time,0.7,seconds for the deposit icon to sail from the plot to the home
+sell_fly_duration,0.65,seconds for coin/xp icons to fly from sell click to HUD,
+sell_fly_arc_height,130,pixels the fly curve arcs above the straight path,
+sell_fly_icon_size,26,px size of the flying coin/xp icons,
+sell_fly_max_icons,5,max flying icons per sale (per currency),
+sell_fly_stagger,0.07,seconds between successive flying icons,
+sell_fly_origin_jitter,14,px random scatter of each icon's start point,
+wheat_cost,13,cost to buy a wheat to start planting,
+beets_cost,20,cost to buy a beet to start planting,
+cabbage_cost,30,cost to buy a cabbage to start planting,
+wheat_grow_time,7,seconds (user: 1-3 min per crop),
+beets_grow_time,12,,
+cabbage_grow_time,60,,
+wheat_sell,8,,
+beets_sell,15,,
+cabbage_sell,20,,
+wheat_xp,0.75,,
+beets_xp,1,,
+cabbage_xp,1.5,,
+egg_sell,39,1.5x input cost (1 chicken feed = 2 wheat @ 13),
+egg_xp,1,,
+milk_sell,105,1.5x input cost (1 cow feed = 2 beets @ 20 + 1 cabbage @ 30),
+milk_xp,1.5,,
+butter_sell,75,,
+butter_xp,5,,
+bread_sell,42,1.6x input cost (2 wheat @ 13 = 26; 41.6 rounded up),
+bread_xp,3.5,,
+farm_plot_cost,25,,
+farm_plot_max,25,,
+axe_cost,40,consumed on use — removes small trees (user direction),
+saw_cost,90,consumed on use — removes big trees; costlier than the axe (user direction),
+chicken_coop_cost,150,,
+barn_cost,250,home for cows (replaced cow pasture),
+dairy_barn_cost,300,,
+bakery_cost,300,,
+chicken_cost,30,,
+cow_cost,60,,
+chicken_max,6,housing capacity of the single coop,
+cow_max,4,housing capacity of the single barn,
+chicken_cycle_time,20,production seconds after eating,
+cow_cycle_time,60,,
+animal_eat_duration,2.5,seconds showing the eat pose,
+chicken_feed_craft_time,20,,
+cow_feed_craft_time,45,,
+butter_craft_time,60,,
+bread_craft_time,45,,
+xp_level_base,4,xpToNext = round(base*(1+ln(L))),
+unlock_wheat,1,player level required to buy in shop,
+unlock_farm_plot,1,,
+unlock_axe,2,,
+unlock_beets,2,,
+unlock_chicken,3,,
+unlock_chicken_coop,3,,
+unlock_cabbage,3,,
+unlock_bakery,4,,
+unlock_cow,4,,
+unlock_barn,4,,
+unlock_saw,5,,
+unlock_dairy_barn,5,,
+tree_small_count,7,initial trees on the farm,
+grid_half_w,48,half-width px of a grid diamond cell (full diamond 96 px wide),
+grid_half_h,24,half-height px of a grid diamond cell (24/48 = 26.6 deg isometric edge angle),
+disp_tree_small,72,,
+disp_tree_large,120,on-screen width px of a big (saw-only) tree,
+tree_jitter,8,max random x/y px offset applied to placed trees so rows/columns don't align,
+disp_player_home,150,,
+disp_barn,150,,
+disp_chicken_coop,105,,
+disp_dairy_barn,140,,
+disp_bakery,105,,
+disp_delivery_box,78,,
+disp_chicken,38,,
+disp_cow,60,,
+disp_crop,84,crop sprite width on a plot (tile is 96 px wide; ~fills the plot),
+disp_crop_base_y,18,crop sprite bottom offset below cell centre (tile bottom vertex is 24),
+animal_wander_speed,22,px per second,
+radial_button_size,52,radial menu button diameter px,
+radial_radius,56,radial menu ring radius px,
+blocker_min_coverage,0.02,min fraction of a cell a road blocker must cover to block it,
+deposit_icon_size,28,on-screen width px of the harvest/collect icon that flies to the home,
+deposit_rise,40,px the deposit icon pops upward before flying to the home,
+deposit_rise_time,0.35,seconds for the deposit icon to pop up,
+deposit_fly_time,0.7,seconds for the deposit icon to sail from the plot to the home,
